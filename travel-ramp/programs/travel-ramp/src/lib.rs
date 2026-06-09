@@ -15,7 +15,7 @@ declare_id!("8auatzShQgGGu6HbNhfPmxFZKNQUzrzW7j7X2n8Knp5g");
 pub mod travel_ramp {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn initialize_traveler(ctx: Context<InitializeTraveler>) -> Result<()> {
+        ctx.accounts.initialize_traveler(&ctx.bumps)
     }
 }
