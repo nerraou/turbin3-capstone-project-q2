@@ -8,6 +8,16 @@ pub struct TravelerAccount {
     pub total_credits: u64,
     pub bump: u8,
 }
+
+#[account]
+#[derive(InitSpace)]
+pub struct ProtocolConfig {
+    pub admin: Pubkey,
+    pub treasury: Pubkey,
+    pub mint: Pubkey,
+    pub bump: u8,
+}
+
 #[derive(InitSpace)]
 #[account]
 pub struct MerchantAccount {
