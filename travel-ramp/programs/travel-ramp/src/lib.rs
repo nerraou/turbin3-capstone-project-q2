@@ -15,7 +15,19 @@ declare_id!("8auatzShQgGGu6HbNhfPmxFZKNQUzrzW7j7X2n8Knp5g");
 pub mod travel_ramp {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn initialize_protocol(ctx: Context<InitializeProtocol>, mint: Pubkey) -> Result<()> {
+        ctx.accounts.initialize_protocol(mint, &ctx.bumps)
+    }
+
+    pub fn initialize_traveler(
+        ctx: Context<InitializeTraveler>,
+        traveler_wallet: Pubkey,
+    ) -> Result<()> {
+        ctx.accounts
+            .initialize_traveler(&ctx.bumps, traveler_wallet)
+    }
+
+    pub fn register_merchant(ctx: Context<RegisterMerchant>) -> Result<()> {
+        ctx.accounts.register_merchant(ctx.bumps)
     }
 }
