@@ -26,4 +26,8 @@ pub mod travel_ramp {
         ctx.accounts
             .initialize_traveler(&ctx.bumps, traveler_wallet)
     }
+
+    pub fn register_merchant(ctx: Context<RegisterMerchant>) -> Result<()> {
+        ctx.accounts.register_merchant(ctx.bumps)
+    }
 }
