@@ -19,7 +19,11 @@ pub mod travel_ramp {
         ctx.accounts.initialize_protocol(mint, &ctx.bumps)
     }
 
-    pub fn initialize_traveler(ctx: Context<InitializeTraveler>) -> Result<()> {
-        ctx.accounts.initialize_traveler(&ctx.bumps)
+    pub fn initialize_traveler(
+        ctx: Context<InitializeTraveler>,
+        traveler_wallet: Pubkey,
+    ) -> Result<()> {
+        ctx.accounts
+            .initialize_traveler(&ctx.bumps, traveler_wallet)
     }
 }

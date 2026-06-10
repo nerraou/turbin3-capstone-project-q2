@@ -4,12 +4,10 @@ use crate::constants::*;
 use crate::state::*;
 
 #[derive(Accounts)]
+#[instruction(traveler_wallet: Pubkey)]
 pub struct InitializeTraveler<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
-
-    /// CHECK: wallet pubkey is stored only
-    pub traveler_wallet: UncheckedAccount<'info>,
 
     #[account(
         init,
@@ -17,7 +15,7 @@ pub struct InitializeTraveler<'info> {
         space = TravelerAccount::DISCRIMINATOR.len() + TravelerAccount::INIT_SPACE,
         seeds = [
            TRAVELER_SEED,
-            traveler_wallet.key().as_ref()
+            traveler_wallet.as_ref()
         ],
         bump
     )]
@@ -27,11 +25,16 @@ pub struct InitializeTraveler<'info> {
 }
 
 impl<'info> InitializeTraveler<'info> {
-    pub fn initialize_traveler(&mut self, bumps: &InitializeTravelerBumps) -> Result<()> {
+    pub fn initialize_traveler(
+        &mut self,
+        bumps: &InitializeTravelerBumps,
+        traveler_wallet: Pubkey,
+    ) -> Result<()> {
         self.traveler_account.set_inner(TravelerAccount {
             operator: self.payer.key(),
-            wallet: self.traveler_wallet.key(),
+            wallet: traveler_wallet,
             total_credits: 0,
+            status: TravelerStatus::Active,
             bump: bumps.traveler_account,
         });
         msg!("Traveler initialized: {}", self.traveler_account.key());
