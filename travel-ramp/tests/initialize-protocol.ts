@@ -11,19 +11,22 @@ import {
 describe("initialize_protocol", () => {
   it("initializes the protocol config and treasury PDAs", async () => {
     const admin = provider.wallet.publicKey;
-    const mint = anchor.web3.Keypair.generate().publicKey;
+    const mint = anchor.web3.Keypair.generate();
 
     const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(admin);
     const [treasury, treasuryBump] = findTreasuryPda(protocolConfig);
 
     const tx = await program.methods
-      .initializeProtocol(mint)
+      .initializeProtocol()
       .accountsPartial({
         admin,
         protocolConfig,
         treasury,
+        travelCreditMint: mint.publicKey,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
+      .signers([mint])
       .rpc();
     await confirmTx(tx);
 
@@ -33,7 +36,7 @@ describe("initialize_protocol", () => {
 
     expect(protocolConfigAccount.admin.equals(admin)).to.equal(true);
     expect(protocolConfigAccount.treasury.equals(treasury)).to.equal(true);
-    expect(protocolConfigAccount.mint.equals(mint)).to.equal(true);
+    expect(protocolConfigAccount.mint.equals(mint.publicKey)).to.equal(true);
     expect(protocolConfigAccount.bump).to.equal(protocolConfigBump);
 
     expect(treasuryAccount.authority.equals(admin)).to.equal(true);
