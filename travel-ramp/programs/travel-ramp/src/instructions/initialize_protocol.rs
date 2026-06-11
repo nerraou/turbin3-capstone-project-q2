@@ -31,8 +31,8 @@ pub struct InitializeProtocol<'info> {
         init,
         payer = admin,
         mint::decimals = 6,
-        mint::authority = admin,
-        mint::freeze_authority = admin
+        mint::authority = treasury,
+        mint::freeze_authority = treasury
     )]
     pub travel_credit_mint: InterfaceAccount<'info, Mint>,
 
@@ -41,10 +41,7 @@ pub struct InitializeProtocol<'info> {
 }
 
 impl<'info> InitializeProtocol<'info> {
-    pub fn initialize_protocol(
-        &mut self,
-        bumps: &InitializeProtocolBumps,
-    ) -> Result<()> {
+    pub fn initialize_protocol(&mut self, bumps: &InitializeProtocolBumps) -> Result<()> {
         self.protocol_config.set_inner(ProtocolConfig {
             admin: self.admin.key(),
             treasury: self.treasury.key(),
