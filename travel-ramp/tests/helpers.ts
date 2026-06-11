@@ -14,6 +14,7 @@ export const seeds = {
   protocol: Buffer.from("protocol"),
   treasury: Buffer.from("treasury"),
   traveler: Buffer.from("traveler"),
+  merchant: Buffer.from("merchant"),
 };
 
 export async function confirmTx(signature: string) {
@@ -45,6 +46,13 @@ export function findTreasuryPda(protocolConfig: anchor.web3.PublicKey) {
 export function findTravelerPda(travelerWallet: anchor.web3.PublicKey) {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [seeds.traveler, travelerWallet.toBuffer()],
+    program.programId,
+  );
+}
+
+export function findMerchantPda(merchant: anchor.web3.PublicKey) {
+  return anchor.web3.PublicKey.findProgramAddressSync(
+    [seeds.merchant, merchant.toBuffer()],
     program.programId,
   );
 }
