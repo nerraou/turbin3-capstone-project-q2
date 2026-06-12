@@ -31,4 +31,7 @@ pub mod travel_ramp {
         ctx.accounts.register_merchant(ctx.bumps)
     }
 
+    pub fn mint_credits(ctx: Context<MintCredits>, amount: u64) -> Result<()> {
+        ctx.accounts.mint_credits(amount)
+    }
 }
