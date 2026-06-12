@@ -11,7 +11,6 @@ pub enum TravelerStatus {
 pub struct TravelerAccount {
     pub operator: Pubkey, // backend/admin
     pub wallet: Pubkey,   // generated traveler wallet
-    pub total_credits: u64,
     pub status: TravelerStatus,
     pub bump: u8,
 }

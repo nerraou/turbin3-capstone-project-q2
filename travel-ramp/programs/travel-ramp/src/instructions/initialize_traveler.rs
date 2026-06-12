@@ -33,7 +33,6 @@ impl<'info> InitializeTraveler<'info> {
         self.traveler_account.set_inner(TravelerAccount {
             operator: self.payer.key(),
             wallet: traveler_wallet,
-            total_credits: 0,
             status: TravelerStatus::Active,
             bump: bumps.traveler_account,
         });

@@ -19,12 +19,11 @@ describe("initialize_traveler", () => {
     await confirmTx(tx);
 
     const account = await program.account.travelerAccount.fetch(
-      travelerAccount
+      travelerAccount,
     );
 
     expect(account.operator.equals(payer)).to.equal(true);
     expect(account.wallet.equals(travelerWallet)).to.equal(true);
-    expect(account.totalCredits.toNumber()).to.equal(0);
     expect(account.status).to.deep.equal({ active: {} });
     expect(account.bump).to.equal(travelerBump);
   });

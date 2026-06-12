@@ -82,12 +82,6 @@ impl<'info> MintCredits<'info> {
 
         mint_to(cpi_ctx, amount)?;
 
-        self.traveler_account.total_credits = self
-            .traveler_account
-            .total_credits
-            .checked_add(amount)
-            .ok_or(TravelRampError::Overflow)?;
-
         self.treasury.total_supply = self
             .treasury
             .total_supply
