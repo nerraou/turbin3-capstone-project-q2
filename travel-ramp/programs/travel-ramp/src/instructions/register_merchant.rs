@@ -1,4 +1,4 @@
-use crate::{state::*, MARCHANT_SEED};
+use crate::{state::*, MERCHANT_SEED};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
@@ -10,7 +10,7 @@ pub struct RegisterMerchant<'info> {
         init,
         payer = merchant,
         space = MerchantAccount::DISCRIMINATOR.len() + MerchantAccount::INIT_SPACE,
-        seeds = [MARCHANT_SEED, merchant.key().as_ref()],
+        seeds = [MERCHANT_SEED, merchant.key().as_ref()],
         bump
     )]
     pub merchant_account: Account<'info, MerchantAccount>,

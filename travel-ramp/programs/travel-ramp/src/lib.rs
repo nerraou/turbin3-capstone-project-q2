@@ -34,4 +34,7 @@ pub mod travel_ramp {
     pub fn mint_credits(ctx: Context<MintCredits>, amount: u64) -> Result<()> {
         ctx.accounts.mint_credits(amount)
     }
+    pub fn pay_merchant(ctx: Context<PayMerchant>, amount: u64) -> Result<()> {
+        ctx.accounts.pay_merchant(amount)
+    }
 }

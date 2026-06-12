@@ -10,4 +10,7 @@ pub enum TravelRampError {
 
     #[msg("Math overflow")]
     Overflow,
+
+    #[msg("Merchant is not approved")]
+    MerchantNotApproved,
 }
