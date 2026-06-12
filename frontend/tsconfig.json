@@ -23,7 +23,8 @@
       "@ui/*": ["./src/components/ui/*"],
       "@lib/*": ["./src/lib/*"],
       "@utils": ["./src/lib/utils.ts"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@hooks/*": ["./src/hooks/*"],
+      "@app/*": ["./src/app/*"]
     }
   },
   "include": [

@@ -1,8 +1,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "./globals.css";
 import { ThemeProvider } from "@components/theme-provider";
 import { cn } from "@lib/utils";
+import "./globals.css";
+
+import ReactQueryProviders from "@components/react-query-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,7 +30,9 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ReactQueryProviders>
+          <ThemeProvider>{children}</ThemeProvider>
+        </ReactQueryProviders>
       </body>
     </html>
   );
