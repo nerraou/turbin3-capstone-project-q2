@@ -39,7 +39,7 @@ pub mod travel_ramp {
     }
 
     pub fn request_redemption(ctx: Context<RequestRedemption>, amount: u64) -> Result<()> {
-        ctx.accounts.request_redemption(amount)
+        ctx.accounts.request_redemption(amount, &ctx.bumps)
     }
 
     pub fn approve_redemption(ctx: Context<ApproveRedemption>) -> Result<()> {
