@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token_interface::{Mint, TokenInterface};
 
 use crate::constants::*;
 use crate::state::*;
@@ -26,19 +27,25 @@ pub struct InitializeProtocol<'info> {
     )]
     pub treasury: Account<'info, Treasury>,
 
+    #[account(
+        init,
+        payer = admin,
+        mint::decimals = 6,
+        mint::authority = treasury,
+        mint::freeze_authority = treasury
+    )]
+    pub travel_credit_mint: InterfaceAccount<'info, Mint>,
+
+    pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
 }
 
 impl<'info> InitializeProtocol<'info> {
-    pub fn initialize_protocol(
-        &mut self,
-        mint: Pubkey,
-        bumps: &InitializeProtocolBumps,
-    ) -> Result<()> {
+    pub fn initialize_protocol(&mut self, bumps: &InitializeProtocolBumps) -> Result<()> {
         self.protocol_config.set_inner(ProtocolConfig {
             admin: self.admin.key(),
             treasury: self.treasury.key(),
-            mint,
+            mint: self.travel_credit_mint.key(),
             bump: bumps.protocol_config,
         });
 

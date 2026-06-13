@@ -29,6 +29,14 @@ export async function confirmTx(signature: string) {
   );
 }
 
+export async function fundAccount(
+  account: anchor.web3.PublicKey,
+  lamports = anchor.web3.LAMPORTS_PER_SOL,
+) {
+  const tx = await connection.requestAirdrop(account, lamports);
+  await confirmTx(tx);
+}
+
 export function findProtocolConfigPda(admin: anchor.web3.PublicKey) {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [seeds.protocol, admin.toBuffer()],
