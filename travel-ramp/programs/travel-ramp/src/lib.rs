@@ -37,4 +37,8 @@ pub mod travel_ramp {
     pub fn pay_merchant(ctx: Context<PayMerchant>, amount: u64) -> Result<()> {
         ctx.accounts.pay_merchant(amount)
     }
+
+    pub fn request_redemption(ctx: Context<RequestRedemption>, amount: u64) -> Result<()> {
+        ctx.accounts.request_redemption(amount)
+    }
 }
