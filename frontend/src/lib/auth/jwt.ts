@@ -1,7 +1,7 @@
 import { jwtVerify, SignJWT } from "jose";
 
 export interface AuthJwtPayload {
-  id: number;
+  id: bigint;
 }
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);

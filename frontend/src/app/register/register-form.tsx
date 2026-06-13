@@ -1,6 +1,5 @@
 "use client";
 import InputFormController from "@components/input-form-controller";
-import useRedirectUrl from "@hooks/use-redirect-url";
 import { Alert, AlertDescription } from "@ui/alert";
 import { Button } from "@ui/button";
 import {
@@ -13,56 +12,70 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { InfoIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import useLoginForm, { type LoginFormFieldValues } from "./use-login-form";
-import useLoginMutation from "./use-login-mutation";
+import useRegisterForm, {
+  type RegisterFormFieldValues,
+} from "./use-register-form";
+import useRegisterMutation from "./use-register-mutation";
 
-export function LoginForm() {
-  const loginForm = useLoginForm();
-  const loginMutation = useLoginMutation();
-  const redirect = useRedirectUrl();
+function getMessageByStatus(status: number) {
+  if (status === StatusCodes.CREATED) {
+    return "Account created";
+  }
+
+  if (status === StatusCodes.CONFLICT) {
+    return "Username already exists";
+  }
+
+  return "Something went wrong! try again!";
+}
+
+export function RegisterForm() {
+  const registerForm = useRegisterForm();
+  const registerMutation = useRegisterMutation();
+  const router = useRouter();
 
   useEffect(() => {
     if (
-      loginMutation.isSuccess &&
-      loginMutation.data.status === StatusCodes.OK
+      registerMutation.isSuccess &&
+      registerMutation.data.status === StatusCodes.CREATED
     ) {
-      redirect();
+      router.push("/login");
     }
-  }, [redirect, loginMutation.isSuccess, loginMutation.data]);
+  }, [router, registerMutation.isSuccess, registerMutation.data]);
 
-  async function onFormSubmit(data: LoginFormFieldValues) {
-    loginMutation.mutate(data);
+  async function onFormSubmit(data: RegisterFormFieldValues) {
+    registerMutation.mutate(data);
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>Create New Account</CardTitle>
           <CardDescription>
-            Enter your username and password to sign in.
+            Create your new account to start using the app!
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          {loginMutation.isSuccess &&
-            loginMutation.data?.status !== StatusCodes.OK && (
-              <Alert className="mb-2">
-                <InfoIcon />
-                <AlertDescription>
-                  Username and/or password are incorrect
-                </AlertDescription>
-              </Alert>
-            )}
+          {registerMutation.isSuccess && (
+            <Alert className="mb-2">
+              <InfoIcon />
+              <AlertDescription>
+                {getMessageByStatus(registerMutation.data.status)}
+              </AlertDescription>
+            </Alert>
+          )}
 
           <form
             className="space-y-4"
-            onSubmit={loginForm.handleSubmit(onFormSubmit)}
+            onSubmit={registerForm.handleSubmit(onFormSubmit)}
           >
             <div className="space-y-2">
               <InputFormController
-                control={loginForm.control}
+                control={registerForm.control}
                 name="username"
                 label="Username"
                 inputProps={{
@@ -74,7 +87,7 @@ export function LoginForm() {
 
             <div className="space-y-2">
               <InputFormController
-                control={loginForm.control}
+                control={registerForm.control}
                 name="password"
                 label="Password"
                 inputProps={{
@@ -88,16 +101,16 @@ export function LoginForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loginMutation.isPending}
+              disabled={registerMutation.isPending}
             >
-              Login
+              Register
             </Button>
           </form>
 
           <p className="mt-2 text-center leading-7">
-            New on our platform?{" "}
-            <Link prefetch={false} href="/register" className="font-bold">
-              Create an account
+            Already have an account?{" "}
+            <Link prefetch={false} href="/login" className="font-bold">
+              Login
             </Link>
           </p>
         </CardContent>

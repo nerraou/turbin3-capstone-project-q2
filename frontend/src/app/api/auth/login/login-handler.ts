@@ -1,8 +1,8 @@
 import { createAccessToken } from "@lib/auth/jwt";
+import { setHostHttpCookie } from "@lib/cookie-utils";
 import { getUserByUsername } from "@lib/database/repositories";
-import bcrypt from "bcrypt";
+import { compare as compareHash } from "@lib/hash";
 import { StatusCodes } from "http-status-codes";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { type LoginApiData } from "./login-api-data-schema";
 
@@ -18,13 +18,7 @@ async function createResponse(
   accessToken?: string,
 ): Promise<NextResponse<LoginHandlerReturn>> {
   if (accessToken) {
-    const cookiesStore = await cookies();
-
-    cookiesStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-    });
+    setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
   }
 
   return NextResponse.json({ message }, { status });
@@ -39,7 +33,7 @@ export default async function loginHandler(
     return createResponse(StatusCodes.UNAUTHORIZED, "Unauthorized");
   }
 
-  const isCorrectPassword = bcrypt.compare(data.password, user.password);
+  const isCorrectPassword = compareHash(data.password, user.password);
 
   if (!isCorrectPassword) {
     return createResponse(StatusCodes.UNAUTHORIZED, "Unauthorized");

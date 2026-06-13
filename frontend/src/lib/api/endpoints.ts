@@ -1,3 +1,5 @@
 // Auth
 export const LOGIN_ENDPOINT = "/api/auth/login";
-export const REGISTER_ENDPOINT = "/api/auth/register";
+
+// Users
+export const REGISTER_ENDPOINT = "/api/users/register";
