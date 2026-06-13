@@ -13,4 +13,7 @@ pub enum TravelRampError {
 
     #[msg("Merchant is not approved")]
     MerchantNotApproved,
+
+    #[msg("Invalid redemption status")]
+    InvalidRedemptionStatus,
 }

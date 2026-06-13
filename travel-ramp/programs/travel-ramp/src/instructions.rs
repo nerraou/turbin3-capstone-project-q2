@@ -1,3 +1,4 @@
+pub mod approve_redemption;
 pub mod initialize_protocol;
 pub mod initialize_traveler;
 pub mod mint_credits;
@@ -5,6 +6,7 @@ pub mod pay_merchant;
 pub mod register_merchant;
 pub mod request_redemption;
 
+pub use approve_redemption::*;
 pub use initialize_protocol::*;
 pub use initialize_traveler::*;
 pub use mint_credits::*;
