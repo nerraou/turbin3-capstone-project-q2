@@ -51,7 +51,11 @@ pub struct RequestRedemption<'info> {
 }
 
 impl<'info> RequestRedemption<'info> {
-    pub fn request_redemption(&mut self, amount: u64) -> Result<()> {
+    pub fn request_redemption(
+        &mut self,
+        amount: u64,
+        bumps: &RequestRedemptionBumps,
+    ) -> Result<()> {
         require!(amount > 0, TravelRampError::InvalidAmount);
         require!(
             self.merchant_account.status == MerchantStatus::Approved,
@@ -72,7 +76,7 @@ impl<'info> RequestRedemption<'info> {
             merchant: self.merchant.key(),
             amount,
             status: RedemptionStatus::Pending,
-            bump: self.redemption_request.bump,
+            bump: bumps.redemption_request,
         });
 
         Ok(())
