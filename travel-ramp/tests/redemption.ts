@@ -3,6 +3,7 @@ import { expect } from "chai";
 import {
   confirmTx,
   findMerchantPda,
+  findPaymentReceiptPda,
   findProtocolConfigPda,
   findRedemptionPda,
   findTravelerPda,
@@ -27,6 +28,11 @@ async function setupMerchantWithCredits() {
   const [treasury] = findTreasuryPda(protocolConfig);
   const [travelerAccount] = findTravelerPda(travelerWallet.publicKey);
   const [merchantAccount] = findMerchantPda(merchantWallet.publicKey);
+  const [paymentReceipt] = findPaymentReceiptPda(
+    travelerWallet.publicKey,
+    merchantWallet.publicKey,
+    new anchor.BN(0),
+  );
 
   const travelerAta = anchor.utils.token.associatedAddress({
     mint: mint.publicKey,
@@ -102,6 +108,7 @@ async function setupMerchantWithCredits() {
       merchantAccount,
       travelerAta,
       merchantAta,
+      paymentReceipt,
       tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
       associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,

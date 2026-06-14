@@ -10,3 +10,5 @@ pub const TREASURY_SEED: &[u8] = b"treasury";
 pub const MERCHANT_SEED: &[u8] = b"merchant";
 
 pub const REDEMPTION_SEED: &[u8] = b"redemption";
+
+pub const PAYMENT_RECEIPT_SEED: &[u8] = b"payment_receipt";

@@ -20,27 +20,27 @@ pub struct PayMerchant<'info> {
         bump = protocol_config.bump,
         has_one = mint
     )]
-    pub protocol_config: Account<'info, ProtocolConfig>,
+    pub protocol_config: Box<Account<'info, ProtocolConfig>>,
 
     #[account(
         mut,
         address = protocol_config.mint
     )]
-    pub mint: InterfaceAccount<'info, Mint>,
+    pub mint: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
         mut,
         seeds = [TRAVELER_SEED, traveler_wallet.key().as_ref()],
         bump = traveler_account.bump
     )]
-    pub traveler_account: Account<'info, TravelerAccount>,
+    pub traveler_account: Box<Account<'info, TravelerAccount>>,
 
     #[account(
         mut,
         seeds = [MERCHANT_SEED, merchant_account.authority.as_ref()],
         bump = merchant_account.bump
     )]
-    pub merchant_account: Account<'info, MerchantAccount>,
+    pub merchant_account: Box<Account<'info, MerchantAccount>>,
 
     #[account(
         mut,
@@ -48,7 +48,7 @@ pub struct PayMerchant<'info> {
         associated_token::authority = traveler_wallet,
         associated_token::token_program = token_program
     )]
-    pub traveler_ata: InterfaceAccount<'info, TokenAccount>,
+    pub traveler_ata: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,
@@ -57,7 +57,21 @@ pub struct PayMerchant<'info> {
         associated_token::authority = merchant_wallet,
         associated_token::token_program = token_program
     )]
-    pub merchant_ata: InterfaceAccount<'info, TokenAccount>,
+    pub merchant_ata: Box<InterfaceAccount<'info, TokenAccount>>,
+
+    #[account(
+        init,
+        payer = traveler_wallet,
+        space = PaymentReceipt::DISCRIMINATOR.len() + PaymentReceipt::INIT_SPACE,
+        seeds = [
+            PAYMENT_RECEIPT_SEED,
+            traveler_wallet.key().as_ref(),
+            merchant_wallet.key().as_ref(),
+            merchant_account.total_received.to_le_bytes().as_ref()
+        ],
+        bump
+    )]
+    pub payment_receipt: Box<Account<'info, PaymentReceipt>>,
 
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
@@ -65,7 +79,7 @@ pub struct PayMerchant<'info> {
 }
 
 impl<'info> PayMerchant<'info> {
-    pub fn pay_merchant(&mut self, amount: u64) -> Result<()> {
+    pub fn pay_merchant(&mut self, amount: u64, bumps: &PayMerchantBumps) -> Result<()> {
         require!(amount > 0, TravelRampError::InvalidAmount);
 
         require!(
@@ -88,6 +102,16 @@ impl<'info> PayMerchant<'info> {
         let cpi_ctx = CpiContext::new(self.token_program.key(), cpi_accounts);
 
         transfer_checked(cpi_ctx, amount, self.mint.decimals)?;
+
+        self.payment_receipt.set_inner(PaymentReceipt {
+            traveler: self.traveler_wallet.key(),
+            merchant: self.merchant_wallet.key(),
+            gross_amount: amount,
+            merchant_amount: amount,
+            protocol_fee: 0,
+            timestamp: Clock::get()?.unix_timestamp,
+            bump: bumps.payment_receipt,
+        });
 
         self.merchant_account.total_received = self
             .merchant_account
