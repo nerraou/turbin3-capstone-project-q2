@@ -15,8 +15,8 @@ declare_id!("8auatzShQgGGu6HbNhfPmxFZKNQUzrzW7j7X2n8Knp5g");
 pub mod travel_ramp {
     use super::*;
 
-    pub fn initialize_protocol(ctx: Context<InitializeProtocol>) -> Result<()> {
-        ctx.accounts.initialize_protocol(&ctx.bumps)
+    pub fn initialize_protocol(ctx: Context<InitializeProtocol>, fee_bps: u16) -> Result<()> {
+        ctx.accounts.initialize_protocol(fee_bps, &ctx.bumps)
     }
 
     pub fn initialize_traveler(

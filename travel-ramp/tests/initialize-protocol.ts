@@ -12,12 +12,13 @@ describe("initialize_protocol", () => {
   it("initializes the protocol config and treasury PDAs", async () => {
     const admin = provider.wallet.publicKey;
     const mint = anchor.web3.Keypair.generate();
+    const fee_bps = 1000;
 
     const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(admin);
     const [treasury, treasuryBump] = findTreasuryPda(protocolConfig);
 
     const tx = await program.methods
-      .initializeProtocol()
+      .initializeProtocol(fee_bps)
       .accountsPartial({
         admin,
         protocolConfig,
@@ -30,8 +31,9 @@ describe("initialize_protocol", () => {
       .rpc();
     await confirmTx(tx);
 
-    const protocolConfigAccount =
-      await program.account.protocolConfig.fetch(protocolConfig);
+    const protocolConfigAccount = await program.account.protocolConfig.fetch(
+      protocolConfig,
+    );
     const treasuryAccount = await program.account.treasury.fetch(treasury);
 
     expect(protocolConfigAccount.admin.equals(admin)).to.equal(true);
