@@ -9,5 +9,8 @@ declare namespace NodeJS {
 
     // JWT
     JWT_SECRET: string;
+
+    // Wallet encryption
+    WALLET_KEK: string;
   }
 }

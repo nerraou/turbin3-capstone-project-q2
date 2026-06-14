@@ -1,6 +1,13 @@
-import { createUser, getUserByUsername } from "@lib/database/repositories";
+import { db } from "@lib/database/connection";
+import {
+  createUser,
+  createWallet,
+  getUserByUsername,
+} from "@lib/database/repositories";
 import { hash as hashPassword } from "@lib/hash";
 import { hasAttribute } from "@lib/utils";
+import { createWalletEncryption } from "@lib/wallet";
+import { generateKeyPairSigner } from "@solana/kit";
 import { StatusCodes } from "http-status-codes";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -38,6 +45,21 @@ async function createResponse(
   return NextResponse.json({ message }, { status });
 }
 
+async function generateWallet() {
+  const signer = await generateKeyPairSigner(true);
+
+  const kek = Buffer.from(process.env.WALLET_KEK, "hex");
+  const privateKeyJwk = await crypto.subtle.exportKey(
+    "jwk",
+    signer.keyPair.privateKey,
+  );
+
+  return {
+    ...createWalletEncryption(kek, privateKeyJwk),
+    address: signer.address,
+  };
+}
+
 export default async function registerHandler(
   data: RegisterApiData,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
@@ -50,9 +72,28 @@ export default async function registerHandler(
   const hashedPassword = await hashPassword(data.password);
 
   try {
-    await createUser({
-      username: data.username,
-      password: hashedPassword,
+    const wallet = await generateWallet();
+
+    await db.transaction(async (tx) => {
+      const createdUser = await createUser(
+        {
+          username: data.username,
+          password: hashedPassword,
+        },
+        tx,
+      );
+
+      await createWallet(
+        {
+          chain: "solana",
+          address: wallet.address,
+          encryptedDek: wallet.encryptedDek,
+          encryptedPrivateKey: wallet.encryptedPrivateKey,
+          userId: createdUser.id,
+          keyVersion: "v1",
+        },
+        tx,
+      );
     });
 
     return createResponse(StatusCodes.CREATED, "Success");

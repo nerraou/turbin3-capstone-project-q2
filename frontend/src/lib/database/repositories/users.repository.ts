@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../connection";
 import { NewUser, users, type User } from "../schema/users";
+import { PgTransaction } from "../types";
 
 export async function getUserByUsername(
   username: string,
@@ -29,8 +30,15 @@ export async function getUserById(id: bigint): Promise<User | undefined> {
 
 export async function createUser(
   user: Omit<NewUser, "id" | "createdAt" | "updatedAt">,
+  tx?: PgTransaction,
 ) {
-  const createResult = await db.insert(users).values(user).returning();
+  let createResult: User[];
+
+  if (tx) {
+    createResult = await tx.insert(users).values(user).returning();
+  } else {
+    createResult = await db.insert(users).values(user).returning();
+  }
 
   return createResult[0];
 }
