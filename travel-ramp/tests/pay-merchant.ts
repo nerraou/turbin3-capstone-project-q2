@@ -3,6 +3,7 @@ import { expect } from "chai";
 import {
   confirmTx,
   findMerchantPda,
+  findPaymentReceiptPda,
   findProtocolConfigPda,
   findTravelerPda,
   findTreasuryPda,
@@ -27,6 +28,11 @@ describe("pay_merchant", () => {
     const [treasury] = findTreasuryPda(protocolConfig);
     const [travelerAccount] = findTravelerPda(travelerWallet.publicKey);
     const [merchantAccount] = findMerchantPda(merchantWallet.publicKey);
+    const [paymentReceipt] = findPaymentReceiptPda(
+      travelerWallet.publicKey,
+      merchantWallet.publicKey,
+      new anchor.BN(0),
+    );
 
     const travelerAta = anchor.utils.token.associatedAddress({
       mint: mint.publicKey,
@@ -102,6 +108,7 @@ describe("pay_merchant", () => {
         merchantAccount,
         travelerAta,
         merchantAta,
+        paymentReceipt,
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -116,6 +123,8 @@ describe("pay_merchant", () => {
       await program.provider.connection.getTokenAccountBalance(merchantAta);
     const merchantAccountState =
       await program.account.merchantAccount.fetch(merchantAccount);
+    const receipt =
+      await program.account.paymentReceipt.fetch(paymentReceipt);
 
     expect(travelerBalance.value.amount).to.equal(
       mintAmount.sub(payAmount).toString(),
@@ -124,5 +133,10 @@ describe("pay_merchant", () => {
     expect(merchantAccountState.totalReceived.toString()).to.equal(
       payAmount.toString(),
     );
+    expect(receipt.traveler.equals(travelerWallet.publicKey)).to.equal(true);
+    expect(receipt.merchant.equals(merchantWallet.publicKey)).to.equal(true);
+    expect(receipt.grossAmount.toString()).to.equal(payAmount.toString());
+    expect(receipt.merchantAmount.toString()).to.equal(payAmount.toString());
+    expect(receipt.protocolFee.toString()).to.equal("0");
   });
 });

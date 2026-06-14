@@ -16,6 +16,7 @@ export const seeds = {
   traveler: Buffer.from("traveler"),
   merchant: Buffer.from("merchant"),
   redemption: Buffer.from("redemption"),
+  paymentReceipt: Buffer.from("payment_receipt"),
 };
 
 export async function confirmTx(signature: string) {
@@ -75,6 +76,22 @@ export function findRedemptionPda(
       seeds.redemption,
       merchant.toBuffer(),
       totalRedeemed.toArrayLike(Buffer, "le", 8),
+    ],
+    program.programId,
+  );
+}
+
+export function findPaymentReceiptPda(
+  traveler: anchor.web3.PublicKey,
+  merchant: anchor.web3.PublicKey,
+  merchantTotalReceived: anchor.BN,
+) {
+  return anchor.web3.PublicKey.findProgramAddressSync(
+    [
+      seeds.paymentReceipt,
+      traveler.toBuffer(),
+      merchant.toBuffer(),
+      merchantTotalReceived.toArrayLike(Buffer, "le", 8),
     ],
     program.programId,
   );
