@@ -19,6 +19,11 @@ async function setupMerchantWithCredits() {
   const mint = anchor.web3.Keypair.generate();
   const mintAmount = new anchor.BN(1_000_000);
   const payAmount = new anchor.BN(400_000);
+  const feeBps = 1000;
+  const protocolFee = payAmount
+    .mul(new anchor.BN(feeBps))
+    .div(new anchor.BN(10_000));
+  const merchantAmount = payAmount.sub(protocolFee);
 
   await fundAccount(admin.publicKey);
   await fundAccount(travelerWallet.publicKey);
@@ -42,9 +47,13 @@ async function setupMerchantWithCredits() {
     mint: mint.publicKey,
     owner: merchantWallet.publicKey,
   });
+  const treasuryAta = anchor.utils.token.associatedAddress({
+    mint: mint.publicKey,
+    owner: treasury,
+  });
 
   let tx = await program.methods
-    .initializeProtocol()
+    .initializeProtocol(feeBps)
     .accountsPartial({
       admin: admin.publicKey,
       protocolConfig,
@@ -108,6 +117,7 @@ async function setupMerchantWithCredits() {
       merchantAccount,
       travelerAta,
       merchantAta,
+      treasuryAta,
       paymentReceipt,
       tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
       associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
@@ -124,7 +134,7 @@ async function setupMerchantWithCredits() {
     protocolConfig,
     merchantAccount,
     merchantAta,
-    payAmount,
+    payAmount: merchantAmount,
   };
 }
 
@@ -153,8 +163,9 @@ describe("redemption", () => {
       .rpc();
     await confirmTx(tx);
 
-    const request =
-      await program.account.redemptionRequest.fetch(redemptionRequest);
+    const request = await program.account.redemptionRequest.fetch(
+      redemptionRequest,
+    );
     const merchantBalance =
       await program.provider.connection.getTokenAccountBalance(
         setup.merchantAta,
@@ -207,10 +218,12 @@ describe("redemption", () => {
       .rpc();
     await confirmTx(tx);
 
-    const request =
-      await program.account.redemptionRequest.fetch(redemptionRequest);
-    const merchant =
-      await program.account.merchantAccount.fetch(setup.merchantAccount);
+    const request = await program.account.redemptionRequest.fetch(
+      redemptionRequest,
+    );
+    const merchant = await program.account.merchantAccount.fetch(
+      setup.merchantAccount,
+    );
 
     expect(request.status).to.deep.equal({ approved: {} });
     expect(merchant.totalRedeemed.toString()).to.equal(

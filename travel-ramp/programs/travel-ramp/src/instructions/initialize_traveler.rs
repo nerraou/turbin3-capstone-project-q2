@@ -34,6 +34,7 @@ impl<'info> InitializeTraveler<'info> {
             operator: self.payer.key(),
             wallet: traveler_wallet,
             status: TravelerStatus::Active,
+            payment_count: 0,
             bump: bumps.traveler_account,
         });
         msg!("Traveler initialized: {}", self.traveler_account.key());

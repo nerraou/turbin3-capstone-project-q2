@@ -4,30 +4,32 @@ import {
   confirmTx,
   findProtocolConfigPda,
   findTreasuryPda,
+  fundAccount,
   program,
-  provider,
 } from "./helpers";
 
 describe("initialize_protocol", () => {
   it("initializes the protocol config and treasury PDAs", async () => {
-    const admin = provider.wallet.publicKey;
+    const admin = anchor.web3.Keypair.generate();
     const mint = anchor.web3.Keypair.generate();
     const fee_bps = 1000;
 
-    const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(admin);
+    await fundAccount(admin.publicKey);
+
+    const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(admin.publicKey);
     const [treasury, treasuryBump] = findTreasuryPda(protocolConfig);
 
     const tx = await program.methods
       .initializeProtocol(fee_bps)
       .accountsPartial({
-        admin,
+        admin: admin.publicKey,
         protocolConfig,
         treasury,
         travelCreditMint: mint.publicKey,
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([mint])
+      .signers([admin, mint])
       .rpc();
     await confirmTx(tx);
 
@@ -36,12 +38,12 @@ describe("initialize_protocol", () => {
     );
     const treasuryAccount = await program.account.treasury.fetch(treasury);
 
-    expect(protocolConfigAccount.admin.equals(admin)).to.equal(true);
+    expect(protocolConfigAccount.admin.equals(admin.publicKey)).to.equal(true);
     expect(protocolConfigAccount.treasury.equals(treasury)).to.equal(true);
     expect(protocolConfigAccount.mint.equals(mint.publicKey)).to.equal(true);
     expect(protocolConfigAccount.bump).to.equal(protocolConfigBump);
 
-    expect(treasuryAccount.authority.equals(admin)).to.equal(true);
+    expect(treasuryAccount.authority.equals(admin.publicKey)).to.equal(true);
     expect(treasuryAccount.totalSupply.toNumber()).to.equal(0);
     expect(treasuryAccount.bump).to.equal(treasuryBump);
   });
