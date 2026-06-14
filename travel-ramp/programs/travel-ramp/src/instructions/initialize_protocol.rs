@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenInterface};
 
 use crate::constants::*;
+use crate::error::TravelRampError;
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -41,11 +42,17 @@ pub struct InitializeProtocol<'info> {
 }
 
 impl<'info> InitializeProtocol<'info> {
-    pub fn initialize_protocol(&mut self, bumps: &InitializeProtocolBumps) -> Result<()> {
+    pub fn initialize_protocol(
+        &mut self,
+        fee_bps: u16,
+        bumps: &InitializeProtocolBumps,
+    ) -> Result<()> {
+        require!(fee_bps <= 1_000, TravelRampError::InvalidFee);
         self.protocol_config.set_inner(ProtocolConfig {
             admin: self.admin.key(),
             treasury: self.treasury.key(),
             mint: self.travel_credit_mint.key(),
+            fee_bps,
             bump: bumps.protocol_config,
         });
 

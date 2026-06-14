@@ -16,4 +16,7 @@ pub enum TravelRampError {
 
     #[msg("Invalid redemption status")]
     InvalidRedemptionStatus,
+
+    #[msg("Invalid protocol fee")]
+    InvalidFee,
 }

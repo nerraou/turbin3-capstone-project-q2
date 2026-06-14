@@ -15,6 +15,7 @@ describe("mint_credits", () => {
     const travelerWallet = anchor.web3.Keypair.generate().publicKey;
     const mint = anchor.web3.Keypair.generate();
     const amount = new anchor.BN(1_000_000);
+    const feeBps = 1000;
 
     await fundAccount(admin.publicKey);
 
@@ -27,7 +28,7 @@ describe("mint_credits", () => {
     });
 
     let tx = await program.methods
-      .initializeProtocol()
+      .initializeProtocol(feeBps)
       .accountsPartial({
         admin: admin.publicKey,
         protocolConfig,

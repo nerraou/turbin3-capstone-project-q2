@@ -19,6 +19,11 @@ describe("pay_merchant", () => {
     const mint = anchor.web3.Keypair.generate();
     const mintAmount = new anchor.BN(1_000_000);
     const payAmount = new anchor.BN(250_000);
+    const feeBps = 1000;
+    const protocolFee = payAmount
+      .mul(new anchor.BN(feeBps))
+      .div(new anchor.BN(10_000));
+    const merchantAmount = payAmount.sub(protocolFee);
 
     await fundAccount(admin.publicKey);
     await fundAccount(travelerWallet.publicKey);
@@ -42,9 +47,13 @@ describe("pay_merchant", () => {
       mint: mint.publicKey,
       owner: merchantWallet.publicKey,
     });
+    const treasuryAta = anchor.utils.token.associatedAddress({
+      mint: mint.publicKey,
+      owner: treasury,
+    });
 
     let tx = await program.methods
-      .initializeProtocol()
+      .initializeProtocol(feeBps)
       .accountsPartial({
         admin: admin.publicKey,
         protocolConfig,
@@ -108,6 +117,7 @@ describe("pay_merchant", () => {
         merchantAccount,
         travelerAta,
         merchantAta,
+        treasuryAta,
         paymentReceipt,
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
@@ -121,22 +131,27 @@ describe("pay_merchant", () => {
       await program.provider.connection.getTokenAccountBalance(travelerAta);
     const merchantBalance =
       await program.provider.connection.getTokenAccountBalance(merchantAta);
-    const merchantAccountState =
-      await program.account.merchantAccount.fetch(merchantAccount);
-    const receipt =
-      await program.account.paymentReceipt.fetch(paymentReceipt);
+    const treasuryBalance =
+      await program.provider.connection.getTokenAccountBalance(treasuryAta);
+    const merchantAccountState = await program.account.merchantAccount.fetch(
+      merchantAccount,
+    );
+    const receipt = await program.account.paymentReceipt.fetch(paymentReceipt);
 
     expect(travelerBalance.value.amount).to.equal(
       mintAmount.sub(payAmount).toString(),
     );
-    expect(merchantBalance.value.amount).to.equal(payAmount.toString());
+    expect(merchantBalance.value.amount).to.equal(merchantAmount.toString());
+    expect(treasuryBalance.value.amount).to.equal(protocolFee.toString());
     expect(merchantAccountState.totalReceived.toString()).to.equal(
-      payAmount.toString(),
+      merchantAmount.toString(),
     );
     expect(receipt.traveler.equals(travelerWallet.publicKey)).to.equal(true);
     expect(receipt.merchant.equals(merchantWallet.publicKey)).to.equal(true);
     expect(receipt.grossAmount.toString()).to.equal(payAmount.toString());
-    expect(receipt.merchantAmount.toString()).to.equal(payAmount.toString());
-    expect(receipt.protocolFee.toString()).to.equal("0");
+    expect(receipt.merchantAmount.toString()).to.equal(
+      merchantAmount.toString(),
+    );
+    expect(receipt.protocolFee.toString()).to.equal(protocolFee.toString());
   });
 });
