@@ -12,5 +12,10 @@ declare namespace NodeJS {
 
     // Wallet encryption
     WALLET_KEK: string;
+
+    // Solana
+    SOLANA_RPC_URL: string;
+    TRAVELRAMP_PROGRAM_ID: string;
+    BACKEND_WALLET_SECRET_KEY: string;
   }
 }
