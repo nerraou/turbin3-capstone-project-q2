@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write \"**/*.{ts,js,mjs,tsx,json,md}\"",
+    "format": "prettier --write \"**/*.{ts,js,mjs,tsx,json,md,css}\"",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
