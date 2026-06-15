@@ -1,3 +1,4 @@
+import { getAnchorProgram } from "@lib/anchor";
 import { db } from "@lib/database/connection";
 import {
   createUser,
@@ -8,6 +9,11 @@ import { hash as hashPassword } from "@lib/hash";
 import { hasAttribute } from "@lib/utils";
 import { createWalletEncryption } from "@lib/wallet";
 import { generateKeyPairSigner } from "@solana/kit";
+import {
+  PublicKey,
+  SendTransactionError,
+  SystemProgram,
+} from "@solana/web3.js";
 import { StatusCodes } from "http-status-codes";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -20,7 +26,7 @@ export interface RegisterHandlerReturn {
 }
 
 export function isUniqueViolation(error: unknown) {
-  if (hasAttribute(error, "cause") && hasAttribute(error?.cause, "code")) {
+  if (hasAttribute(error, "cause") && hasAttribute(error.cause, "code")) {
     return error.cause.code === "23505";
   } else {
     return false;
@@ -64,6 +70,7 @@ export default async function registerHandler(
   data: RegisterApiData,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
   const user = await getUserByUsername(data.username);
+  const { program, wallet } = getAnchorProgram();
 
   if (user) {
     return createResponse(StatusCodes.CONFLICT, "Username already exists");
@@ -72,7 +79,9 @@ export default async function registerHandler(
   const hashedPassword = await hashPassword(data.password);
 
   try {
-    const wallet = await generateWallet();
+    const travelerWallet = await generateWallet();
+    const travelerWalletPublicKey = new PublicKey(travelerWallet.address);
+    let initializeTravelerTx: string | undefined;
 
     await db.transaction(async (tx) => {
       const createdUser = await createUser(
@@ -86,18 +95,45 @@ export default async function registerHandler(
       await createWallet(
         {
           chain: "solana",
-          address: wallet.address,
-          encryptedDek: wallet.encryptedDek,
-          encryptedPrivateKey: wallet.encryptedPrivateKey,
+          address: travelerWallet.address,
+          encryptedDek: travelerWallet.encryptedDek,
+          encryptedPrivateKey: travelerWallet.encryptedPrivateKey,
           userId: createdUser.id,
           keyVersion: "v1",
         },
         tx,
       );
+
+      const [travelerAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("traveler"), travelerWalletPublicKey.toBuffer()],
+        program.programId,
+      );
+
+      initializeTravelerTx = await program.methods
+        .initializeTraveler(travelerWalletPublicKey)
+        .accountsPartial({
+          payer: wallet.publicKey,
+          travelerAccount,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
     });
 
-    return createResponse(StatusCodes.CREATED, "Success");
+    return NextResponse.json(
+      {
+        message: "Success",
+        initializeTravelerTx,
+        travelerWallet: travelerWallet.address,
+      },
+      { status: StatusCodes.CREATED },
+    );
   } catch (error) {
+    if (error instanceof SendTransactionError) {
+      console.error("Solana transaction:", error);
+    } else {
+      console.error(error);
+    }
+
     if (isUniqueViolation(error)) {
       return createResponse(StatusCodes.CONFLICT, "Username already exists");
     } else {

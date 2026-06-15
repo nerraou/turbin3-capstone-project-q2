@@ -23,6 +23,7 @@ pub mod travel_ramp {
         ctx: Context<InitializeTraveler>,
         traveler_wallet: Pubkey,
     ) -> Result<()> {
+        msg!("Traveler wallet: {}", traveler_wallet);
         ctx.accounts
             .initialize_traveler(&ctx.bumps, traveler_wallet)
     }
