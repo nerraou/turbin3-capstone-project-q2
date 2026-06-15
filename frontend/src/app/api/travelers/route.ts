@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { getAnchorProgram } from "../../../lib/anchor";
+import { getAnchorProgram } from "@lib/anchor";
 
 export async function GET() {
   try {
