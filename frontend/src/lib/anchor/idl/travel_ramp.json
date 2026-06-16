@@ -564,7 +564,7 @@
               },
               {
                 "kind": "account",
-                "path": "merchant_account.authority",
+                "path": "merchant_account.wallet",
                 "account": "MerchantAccount"
               }
             ]
@@ -815,7 +815,7 @@
       ],
       "accounts": [
         {
-          "name": "merchant",
+          "name": "payer",
           "writable": true,
           "signer": true
         },
@@ -838,8 +838,8 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "merchant"
+                "kind": "arg",
+                "path": "merchant_wallet"
               }
             ]
           }
@@ -849,7 +849,12 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "merchant_wallet",
+          "type": "pubkey"
+        }
+      ]
     },
     {
       "name": "request_redemption",
@@ -1183,7 +1188,11 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "authority",
+            "name": "operator",
+            "type": "pubkey"
+          },
+          {
+            "name": "wallet",
             "type": "pubkey"
           },
           {
@@ -1193,10 +1202,6 @@
                 "name": "MerchantStatus"
               }
             }
-          },
-          {
-            "name": "pending_redemption",
-            "type": "u64"
           },
           {
             "name": "total_received",
