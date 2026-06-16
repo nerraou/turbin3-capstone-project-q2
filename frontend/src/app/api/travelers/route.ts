@@ -16,7 +16,7 @@ export async function GET() {
 
     const tx = await program.methods
       .initializeTraveler(travelerWallet.publicKey)
-      .accounts({
+      .accountsPartial({
         payer: wallet.publicKey,
         travelerAccount,
         systemProgram: SystemProgram.programId,

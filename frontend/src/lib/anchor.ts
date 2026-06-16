@@ -1,6 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import idl from "./anchor/idl/travel_ramp.json";
+import type { TravelRamp } from "./anchor/types/travel_ramp";
 import { BackendWallet } from "./wallet-wrapper";
 
 export function getAnchorProgram() {
@@ -23,7 +24,7 @@ export function getAnchorProgram() {
     address: new PublicKey(programId).toBase58(),
   };
 
-  const program = new anchor.Program(idlWithAddress as anchor.Idl, provider);
+  const program = new anchor.Program<TravelRamp>(idlWithAddress, provider);
   return {
     program,
     provider,
