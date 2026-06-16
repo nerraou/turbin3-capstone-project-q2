@@ -6,7 +6,7 @@ import { getAnchorProgram } from "@lib/anchor";
 const PROTOCOL_SEED = "protocol";
 const TREASURY_SEED = "treasury";
 
-export async function POST() {
+export async function GET() {
   try {
     const { program, wallet, connection } = getAnchorProgram();
 
