@@ -12,7 +12,7 @@ pub struct PayMerchant<'info> {
     pub traveler_wallet: Signer<'info>,
 
     /// CHECK: only used as ATA authority
-    #[account(address = merchant_account.authority)]
+    #[account(address = merchant_account.wallet)]
     pub merchant_wallet: UncheckedAccount<'info>,
 
     #[account(
@@ -43,7 +43,7 @@ pub struct PayMerchant<'info> {
 
     #[account(
         mut,
-        seeds = [MERCHANT_SEED, merchant_account.authority.as_ref()],
+        seeds = [MERCHANT_SEED, merchant_account.wallet.as_ref()],
         bump = merchant_account.bump
     )]
     pub merchant_account: Box<Account<'info, MerchantAccount>>,
@@ -151,7 +151,7 @@ impl<'info> PayMerchant<'info> {
 
         self.payment_receipt.set_inner(PaymentReceipt {
             traveler: self.traveler_wallet.key(),
-            merchant: self.merchant_account.authority,
+            merchant: self.merchant_account.wallet,
             gross_amount: amount,
             merchant_amount,
             protocol_fee: fee,

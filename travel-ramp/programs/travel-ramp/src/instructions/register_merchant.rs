@@ -2,15 +2,16 @@ use crate::{state::*, MERCHANT_SEED};
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
+#[instruction(merchant_wallet: Pubkey)]
 pub struct RegisterMerchant<'info> {
     #[account(mut)]
-    pub merchant: Signer<'info>,
+    pub payer: Signer<'info>,
 
     #[account(
         init,
-        payer = merchant,
+        payer = payer,
         space = MerchantAccount::DISCRIMINATOR.len() + MerchantAccount::INIT_SPACE,
-        seeds = [MERCHANT_SEED, merchant.key().as_ref()],
+        seeds = [MERCHANT_SEED, merchant_wallet.as_ref()],
         bump
     )]
     pub merchant_account: Account<'info, MerchantAccount>,
@@ -19,11 +20,15 @@ pub struct RegisterMerchant<'info> {
 }
 
 impl<'info> RegisterMerchant<'info> {
-    pub fn register_merchant(&mut self, bumps: RegisterMerchantBumps) -> Result<()> {
+    pub fn register_merchant(
+        &mut self,
+        bumps: RegisterMerchantBumps,
+        merchant_wallet: Pubkey,
+    ) -> Result<()> {
         self.merchant_account.set_inner(MerchantAccount {
-            authority: self.merchant.key(),
+            operator: self.payer.key(),
+            wallet: merchant_wallet,
             status: MerchantStatus::Approved,
-            pending_redemption: 0,
             total_received: 0,
             total_redeemed: 0,
             bump: bumps.merchant_account,

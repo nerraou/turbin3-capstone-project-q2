@@ -4,23 +4,24 @@ import { confirmTx, findMerchantPda, program, provider } from "./helpers";
 
 describe("register_merchant", () => {
   it("initializes a merchant account", async () => {
-    const merchant = anchor.web3.Keypair.generate();
-    const [merchantAccount, merchantBump] = findMerchantPda(merchant.publicKey);
+    const payer = anchor.web3.Keypair.generate();
+    const merchantWallet = anchor.web3.Keypair.generate().publicKey;
+    const [merchantAccount, merchantBump] = findMerchantPda(merchantWallet);
 
     const airdropTx = await provider.connection.requestAirdrop(
-      merchant.publicKey,
+      payer.publicKey,
       1 * anchor.web3.LAMPORTS_PER_SOL,
     );
     await confirmTx(airdropTx);
 
     const tx = await program.methods
-      .registerMerchant()
+      .registerMerchant(merchantWallet)
       .accountsPartial({
-        merchant: merchant.publicKey,
+        payer: payer.publicKey,
         merchantAccount,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([merchant])
+      .signers([payer])
       .rpc();
     await confirmTx(tx);
 
@@ -28,9 +29,9 @@ describe("register_merchant", () => {
       merchantAccount,
     );
 
-    expect(account.authority.equals(merchant.publicKey)).to.equal(true);
+    expect(account.operator.equals(payer.publicKey)).to.equal(true);
+    expect(account.wallet.equals(merchantWallet)).to.equal(true);
     expect(account.status).to.deep.equal({ approved: {} });
-    expect(account.pendingRedemption.toNumber()).to.equal(0);
     expect(account.totalReceived.toNumber()).to.equal(0);
     expect(account.totalRedeemed.toNumber()).to.equal(0);
     expect(account.bump).to.equal(merchantBump);
