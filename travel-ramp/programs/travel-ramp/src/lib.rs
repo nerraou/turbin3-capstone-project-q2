@@ -28,8 +28,11 @@ pub mod travel_ramp {
             .initialize_traveler(&ctx.bumps, traveler_wallet)
     }
 
-    pub fn register_merchant(ctx: Context<RegisterMerchant>) -> Result<()> {
-        ctx.accounts.register_merchant(ctx.bumps)
+    pub fn register_merchant(
+        ctx: Context<RegisterMerchant>,
+        merchant_wallet: Pubkey,
+    ) -> Result<()> {
+        ctx.accounts.register_merchant(ctx.bumps, merchant_wallet)
     }
 
     pub fn mint_credits(ctx: Context<MintCredits>, amount: u64) -> Result<()> {

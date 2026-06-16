@@ -396,7 +396,7 @@ export type TravelRamp = {
               },
               {
                 kind: "account";
-                path: "merchant_account.authority";
+                path: "merchant_account.wallet";
                 account: "merchantAccount";
               },
             ];
@@ -638,7 +638,7 @@ export type TravelRamp = {
       discriminator: [238, 245, 77, 132, 161, 88, 216, 248];
       accounts: [
         {
-          name: "merchant";
+          name: "payer";
           writable: true;
           signer: true;
         },
@@ -652,8 +652,8 @@ export type TravelRamp = {
                 value: [109, 101, 114, 99, 104, 97, 110, 116];
               },
               {
-                kind: "account";
-                path: "merchant";
+                kind: "arg";
+                path: "merchantWallet";
               },
             ];
           };
@@ -663,7 +663,12 @@ export type TravelRamp = {
           address: "11111111111111111111111111111111";
         },
       ];
-      args: [];
+      args: [
+        {
+          name: "merchantWallet";
+          type: "pubkey";
+        },
+      ];
     },
     {
       name: "requestRedemption";
@@ -903,7 +908,11 @@ export type TravelRamp = {
         kind: "struct";
         fields: [
           {
-            name: "authority";
+            name: "operator";
+            type: "pubkey";
+          },
+          {
+            name: "wallet";
             type: "pubkey";
           },
           {
@@ -913,10 +922,6 @@ export type TravelRamp = {
                 name: "merchantStatus";
               };
             };
-          },
-          {
-            name: "pendingRedemption";
-            type: "u64";
           },
           {
             name: "totalReceived";

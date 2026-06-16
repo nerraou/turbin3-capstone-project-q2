@@ -78,13 +78,13 @@ describe("pay_merchant", () => {
     await confirmTx(tx);
 
     tx = await program.methods
-      .registerMerchant()
+      .registerMerchant(merchantWallet.publicKey)
       .accountsPartial({
-        merchant: merchantWallet.publicKey,
+        payer: admin.publicKey,
         merchantAccount,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([merchantWallet])
+      .signers([admin])
       .rpc();
     await confirmTx(tx);
 
