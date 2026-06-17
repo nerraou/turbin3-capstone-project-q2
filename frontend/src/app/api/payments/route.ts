@@ -19,6 +19,7 @@ const PROTOCOL_SEED = "protocol";
 const TREASURY_SEED = "treasury";
 const TRAVELER_SEED = "traveler";
 const MERCHANT_SEED = "merchant";
+const PAYMENT_RECEIPT_SEED = "payment_receipt";
 
 async function getUserFromCookie() {
   // TODO: move this to @lib/login-utils
@@ -113,18 +114,19 @@ export async function POST(req: Request) {
       program.programId,
     );
 
-    const travelerAccountData =
-      await program.account.travelerAccount.fetch(travelerAccount);
+    const merchantAccountData =
+      await program.account.merchantAccount.fetch(merchantAccount);
 
-    const paymentCount = new anchor.BN(
-      travelerAccountData.paymentCount.toString(),
+    const merchantTotalReceived = new anchor.BN(
+      merchantAccountData.totalReceived.toString(),
     );
 
     const [paymentReceipt] = PublicKey.findProgramAddressSync(
       [
-        Buffer.from("receipt"),
+        Buffer.from(PAYMENT_RECEIPT_SEED),
         travelerWallet.publicKey.toBuffer(),
-        paymentCount.toArrayLike(Buffer, "le", 8),
+        merchantWallet.toBuffer(),
+        merchantTotalReceived.toArrayLike(Buffer, "le", 8),
       ],
       program.programId,
     );
@@ -157,8 +159,9 @@ export async function POST(req: Request) {
       .payMerchant(amount)
       .accountsPartial({
         travelerWallet: travelerWallet.publicKey,
-        merchantWallet: body.merchantWallet,
+        merchantWallet,
         protocolConfig,
+        payer: wallet.publicKey,
         treasury,
         mint,
         travelerAccount,

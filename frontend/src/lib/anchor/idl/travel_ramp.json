@@ -299,21 +299,6 @@
           "name": "merchant_wallet"
         },
         {
-          "name": "treasury",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
-              },
-              {
-                "kind": "account",
-                "path": "protocol_config"
-              }
-            ]
-          }
-        },
-        {
           "name": "protocol_config",
           "pda": {
             "seeds": [
@@ -325,6 +310,26 @@
                 "kind": "account",
                 "path": "protocol_config.admin",
                 "account": "ProtocolConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+              },
+              {
+                "kind": "account",
+                "path": "protocol_config"
               }
             ]
           }
