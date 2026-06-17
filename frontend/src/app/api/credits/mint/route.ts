@@ -39,9 +39,6 @@ export async function POST(req: Request) {
       program.programId,
     )[0];
 
-    // const protocolConfigAccount =
-    //   await program.account.protocolConfig.fetch(protocolConfig);
-
     console.log("protocolConfig:", protocolConfig.toBase58());
     console.log("travelerAccount:", travelerAccount.toBase58());
     console.log("travelerWallet:", travelerWallet.toBase58());

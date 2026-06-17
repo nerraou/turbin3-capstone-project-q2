@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "../connection";
 import { NewWallet, Wallet, wallets } from "../schema/wallets";
 import { PgTransaction } from "../types";
@@ -15,4 +16,19 @@ export async function createWallet(
   }
 
   return createResult[0];
+}
+
+export async function getWalletByUserId(
+  id: bigint,
+): Promise<Wallet | undefined> {
+  const walletsResult = await db
+    .select()
+    .from(wallets)
+    .where(eq(wallets.userId, id));
+
+  if (walletsResult.length === 0) {
+    return undefined;
+  }
+
+  return walletsResult[0] as Wallet;
 }
