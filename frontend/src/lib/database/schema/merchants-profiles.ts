@@ -1,20 +1,19 @@
 import {
+  bigint,
   bigserial,
-  pgEnum,
   pgTable,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
 
-export const userRole = pgEnum("role", ["traveler", "merchant", "admin"]);
-
-export const users = pgTable("users", {
+export const merchantsProfile = pgTable("merchants_profiles", {
   id: bigserial({
     mode: "bigint",
   }).primaryKey(),
-  username: varchar().unique().notNull(),
-  password: varchar().notNull(),
-  role: userRole().notNull(),
+  name: varchar(),
+  userId: bigint("user_id", {
+    mode: "bigint",
+  }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -24,5 +23,5 @@ export const users = pgTable("users", {
     .$onUpdateFn(() => new Date()),
 });
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
+export type MerchantProfile = typeof merchantsProfile.$inferSelect;
+export type NewMerchantProfile = typeof merchantsProfile.$inferInsert;

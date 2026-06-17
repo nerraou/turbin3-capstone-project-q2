@@ -5,7 +5,6 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
 
 export const wallets = pgTable("wallets", {
   id: bigserial({
@@ -14,9 +13,7 @@ export const wallets = pgTable("wallets", {
 
   userId: bigint("user_id", {
     mode: "bigint",
-  })
-    .notNull()
-    .references(() => users.id),
+  }).notNull(),
 
   chain: text().notNull(),
   address: text().notNull().unique(),
