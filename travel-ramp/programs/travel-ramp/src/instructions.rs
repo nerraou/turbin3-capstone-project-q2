@@ -5,6 +5,9 @@ pub mod mint_credits;
 pub mod pay_merchant;
 pub mod register_merchant;
 pub mod request_redemption;
+pub mod update_merchant_status;
+pub mod update_protocol_fee;
+pub mod update_traveler_status;
 
 pub use approve_redemption::*;
 pub use initialize_protocol::*;
@@ -13,3 +16,6 @@ pub use mint_credits::*;
 pub use pay_merchant::*;
 pub use register_merchant::*;
 pub use request_redemption::*;
+pub use update_merchant_status::*;
+pub use update_protocol_fee::*;
+pub use update_traveler_status::*;

@@ -49,4 +49,22 @@ pub mod travel_ramp {
     pub fn approve_redemption(ctx: Context<ApproveRedemption>) -> Result<()> {
         ctx.accounts.approve_redemption()
     }
+
+    pub fn update_protocol_fee(ctx: Context<UpdateProtocolFee>, new_fee_bps: u16) -> Result<()> {
+        ctx.accounts.update_protocol_fee(new_fee_bps)
+    }
+
+    pub fn update_merchant_status(
+        ctx: Context<UpdateMerchantStatus>,
+        status: MerchantStatus,
+    ) -> Result<()> {
+        ctx.accounts.update_merchant_status(status)
+    }
+
+    pub fn update_traveler_status(
+        ctx: Context<UpdateTravelerStatus>,
+        status: TravelerStatus,
+    ) -> Result<()> {
+        ctx.accounts.update_traveler_status(status)
+    }
 }
