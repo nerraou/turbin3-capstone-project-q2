@@ -15,8 +15,6 @@ export function createAccessToken(payload: AuthJwtPayload) {
     .sign(JWT_SECRET);
 }
 
-// export function createRefreshToken(payload: JwtPayload) {}
-
 export async function verifyAccessToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);

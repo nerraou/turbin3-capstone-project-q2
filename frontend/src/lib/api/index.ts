@@ -1,2 +1,3 @@
 export * from "./auth/login";
-export * from "./users/register";
+export * from "./travelers/register-traveler";
+export * from "./merchants/register-merchant";

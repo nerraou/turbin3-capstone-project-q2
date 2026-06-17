@@ -15,11 +15,8 @@ import {
   SystemProgram,
 } from "@solana/web3.js";
 import { StatusCodes } from "http-status-codes";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type RegisterApiData } from "./register-api-data-schema";
-
-const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
+import { type TravelerRegisterApiData } from "./register-api-data-schema";
 
 export interface RegisterHandlerReturn {
   message: string;
@@ -36,18 +33,7 @@ export function isUniqueViolation(error: unknown) {
 async function createResponse(
   status: number,
   message: string,
-  accessToken?: string,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
-  if (accessToken) {
-    const cookiesStore = await cookies();
-
-    cookiesStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-    });
-  }
-
   return NextResponse.json({ message }, { status });
 }
 
@@ -66,8 +52,8 @@ async function generateWallet() {
   };
 }
 
-export default async function registerHandler(
-  data: RegisterApiData,
+export default async function registerTravelerHandler(
+  data: TravelerRegisterApiData,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
   const user = await getUserByUsername(data.username);
   const { program, wallet } = getAnchorProgram();
@@ -88,6 +74,7 @@ export default async function registerHandler(
         {
           username: data.username,
           password: hashedPassword,
+          role: "traveler",
         },
         tx,
       );

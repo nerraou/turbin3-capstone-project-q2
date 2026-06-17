@@ -20,6 +20,12 @@ export async function setCookie(
   return cookiesStore.set(key, value, options);
 }
 
+export async function hasCookie(key: string) {
+  const cookiesStore = await cookies();
+
+  return cookiesStore.has(key);
+}
+
 export async function getCookie(key: string) {
   const cookiesStore = await cookies();
 
