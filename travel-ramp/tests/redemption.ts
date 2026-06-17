@@ -26,7 +26,6 @@ async function setupMerchantWithCredits() {
   const merchantAmount = payAmount.sub(protocolFee);
 
   await fundAccount(admin.publicKey);
-  await fundAccount(travelerWallet.publicKey);
   await fundAccount(merchantWallet.publicKey);
 
   const [protocolConfig] = findProtocolConfigPda(admin.publicKey);
@@ -112,6 +111,8 @@ async function setupMerchantWithCredits() {
       travelerWallet: travelerWallet.publicKey,
       merchantWallet: merchantWallet.publicKey,
       protocolConfig,
+      payer: admin.publicKey,
+      treasury,
       mint: mint.publicKey,
       travelerAccount,
       merchantAccount,
@@ -123,7 +124,7 @@ async function setupMerchantWithCredits() {
       associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
       systemProgram: anchor.web3.SystemProgram.programId,
     })
-    .signers([travelerWallet])
+    .signers([admin, travelerWallet])
     .rpc();
   await confirmTx(tx);
 

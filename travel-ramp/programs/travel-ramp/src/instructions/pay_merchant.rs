@@ -16,17 +16,20 @@ pub struct PayMerchant<'info> {
     pub merchant_wallet: UncheckedAccount<'info>,
 
     #[account(
-        seeds = [TREASURY_SEED, protocol_config.key().as_ref()],
-        bump = treasury.bump
-    )]
-    pub treasury: Account<'info, Treasury>,
-
-    #[account(
         seeds = [PROTOCOL_SEED, protocol_config.admin.as_ref()],
         bump = protocol_config.bump,
         has_one = mint
     )]
     pub protocol_config: Box<Account<'info, ProtocolConfig>>,
+
+    #[account(mut, address = protocol_config.admin)]
+    pub payer: Signer<'info>,
+
+    #[account(
+        seeds = [TREASURY_SEED, protocol_config.key().as_ref()],
+        bump = treasury.bump
+    )]
+    pub treasury: Account<'info, Treasury>,
 
     #[account(
         mut,
@@ -58,7 +61,7 @@ pub struct PayMerchant<'info> {
 
     #[account(
         init_if_needed,
-        payer = traveler_wallet,
+        payer = payer,
         associated_token::mint = mint,
         associated_token::authority = merchant_wallet,
         associated_token::token_program = token_program
@@ -67,7 +70,7 @@ pub struct PayMerchant<'info> {
 
     #[account(
         init_if_needed,
-        payer = traveler_wallet,
+        payer = payer,
         associated_token::mint = mint,
         associated_token::authority = treasury,
         associated_token::token_program = token_program
@@ -76,7 +79,7 @@ pub struct PayMerchant<'info> {
 
     #[account(
         init,
-        payer = traveler_wallet,
+        payer = payer,
         space = PaymentReceipt::DISCRIMINATOR.len() + PaymentReceipt::INIT_SPACE,
         seeds = [
             PAYMENT_RECEIPT_SEED,

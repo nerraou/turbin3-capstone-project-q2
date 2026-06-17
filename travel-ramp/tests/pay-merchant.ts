@@ -26,8 +26,6 @@ describe("pay_merchant", () => {
     const merchantAmount = payAmount.sub(protocolFee);
 
     await fundAccount(admin.publicKey);
-    await fundAccount(travelerWallet.publicKey);
-    await fundAccount(merchantWallet.publicKey);
 
     const [protocolConfig] = findProtocolConfigPda(admin.publicKey);
     const [treasury] = findTreasuryPda(protocolConfig);
@@ -112,6 +110,8 @@ describe("pay_merchant", () => {
         travelerWallet: travelerWallet.publicKey,
         merchantWallet: merchantWallet.publicKey,
         protocolConfig,
+        payer: admin.publicKey,
+        treasury,
         mint: mint.publicKey,
         travelerAccount,
         merchantAccount,
@@ -123,7 +123,7 @@ describe("pay_merchant", () => {
         associatedTokenProgram: anchor.utils.token.ASSOCIATED_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([travelerWallet])
+      .signers([admin, travelerWallet])
       .rpc();
     await confirmTx(tx);
 
