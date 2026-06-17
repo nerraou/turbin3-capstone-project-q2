@@ -1,12 +1,10 @@
 import { createAccessToken } from "@lib/auth/jwt";
-import { setHostHttpCookie } from "@lib/cookie-utils";
 import { getUserByUsername } from "@lib/database/repositories";
 import { compare as compareHash } from "@lib/hash";
+import { createSession } from "@lib/login-utils";
 import { StatusCodes } from "http-status-codes";
 import { NextResponse } from "next/server";
 import { type LoginApiData } from "./login-api-data-schema";
-
-export const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
 
 export interface LoginHandlerReturn {
   message: string;
@@ -18,7 +16,7 @@ async function createResponse(
   accessToken?: string,
 ): Promise<NextResponse<LoginHandlerReturn>> {
   if (accessToken) {
-    await setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
+    await createSession(accessToken);
   }
 
   return NextResponse.json({ message }, { status });
