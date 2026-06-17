@@ -9,13 +9,24 @@
   "instructions": [
     {
       "name": "approve_redemption",
-      "discriminator": [94, 27, 164, 127, 156, 216, 161, 39],
+      "discriminator": [
+        94,
+        27,
+        164,
+        127,
+        156,
+        216,
+        161,
+        39
+      ],
       "accounts": [
         {
           "name": "admin",
           "writable": true,
           "signer": true,
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "protocol_config",
@@ -23,7 +34,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 114, 111, 116, 111, 99, 111, 108]
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -39,7 +59,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [109, 101, 114, 99, 104, 97, 110, 116]
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
               },
               {
                 "kind": "account",
@@ -56,7 +85,18 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 100, 101, 109, 112, 116, 105, 111, 110]
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  109,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
               },
               {
                 "kind": "account",
@@ -76,7 +116,16 @@
     },
     {
       "name": "initialize_protocol",
-      "discriminator": [188, 233, 252, 106, 134, 146, 202, 91],
+      "discriminator": [
+        188,
+        233,
+        252,
+        106,
+        134,
+        146,
+        202,
+        91
+      ],
       "accounts": [
         {
           "name": "admin",
@@ -90,7 +139,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 114, 111, 116, 111, 99, 111, 108]
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -106,7 +164,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               },
               {
                 "kind": "account",
@@ -137,7 +204,16 @@
     },
     {
       "name": "initialize_traveler",
-      "discriminator": [120, 97, 232, 74, 191, 61, 169, 77],
+      "discriminator": [
+        120,
+        97,
+        232,
+        74,
+        191,
+        61,
+        169,
+        77
+      ],
       "accounts": [
         {
           "name": "payer",
@@ -151,7 +227,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 97, 118, 101, 108, 101, 114]
+                "value": [
+                  116,
+                  114,
+                  97,
+                  118,
+                  101,
+                  108,
+                  101,
+                  114
+                ]
               },
               {
                 "kind": "arg",
@@ -174,13 +259,24 @@
     },
     {
       "name": "mint_credits",
-      "discriminator": [210, 43, 79, 176, 4, 212, 31, 116],
+      "discriminator": [
+        210,
+        43,
+        79,
+        176,
+        4,
+        212,
+        31,
+        116
+      ],
       "accounts": [
         {
           "name": "admin",
           "writable": true,
           "signer": true,
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "protocol_config",
@@ -188,7 +284,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 114, 111, 116, 111, 99, 111, 108]
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -204,7 +309,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               },
               {
                 "kind": "account",
@@ -212,12 +326,16 @@
               }
             ]
           },
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "mint",
           "writable": true,
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "traveler_account",
@@ -226,7 +344,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 97, 118, 101, 108, 101, 114]
+                "value": [
+                  116,
+                  114,
+                  97,
+                  118,
+                  101,
+                  108,
+                  101,
+                  114
+                ]
               },
               {
                 "kind": "account",
@@ -260,9 +387,38 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
@@ -288,7 +444,16 @@
     },
     {
       "name": "pay_merchant",
-      "discriminator": [37, 199, 250, 174, 75, 46, 249, 238],
+      "discriminator": [
+        37,
+        199,
+        250,
+        174,
+        75,
+        46,
+        249,
+        238
+      ],
       "accounts": [
         {
           "name": "traveler_wallet",
@@ -304,7 +469,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 114, 111, 116, 111, 99, 111, 108]
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -325,7 +499,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               },
               {
                 "kind": "account",
@@ -337,7 +520,9 @@
         {
           "name": "mint",
           "writable": true,
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "traveler_account",
@@ -346,7 +531,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 97, 118, 101, 108, 101, 114]
+                "value": [
+                  116,
+                  114,
+                  97,
+                  118,
+                  101,
+                  108,
+                  101,
+                  114
+                ]
               },
               {
                 "kind": "account",
@@ -362,7 +556,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [109, 101, 114, 99, 104, 97, 110, 116]
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
               },
               {
                 "kind": "account",
@@ -393,9 +596,38 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
@@ -421,9 +653,38 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
@@ -449,9 +710,38 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
@@ -464,8 +754,21 @@
               {
                 "kind": "const",
                 "value": [
-                  112, 97, 121, 109, 101, 110, 116, 95, 114, 101, 99, 101, 105,
-                  112, 116
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  99,
+                  101,
+                  105,
+                  112,
+                  116
                 ]
               },
               {
@@ -505,7 +808,16 @@
     },
     {
       "name": "register_merchant",
-      "discriminator": [238, 245, 77, 132, 161, 88, 216, 248],
+      "discriminator": [
+        238,
+        245,
+        77,
+        132,
+        161,
+        88,
+        216,
+        248
+      ],
       "accounts": [
         {
           "name": "payer",
@@ -519,7 +831,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [109, 101, 114, 99, 104, 97, 110, 116]
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
               },
               {
                 "kind": "arg",
@@ -542,7 +863,16 @@
     },
     {
       "name": "request_redemption",
-      "discriminator": [14, 62, 182, 237, 59, 79, 149, 22],
+      "discriminator": [
+        14,
+        62,
+        182,
+        237,
+        59,
+        79,
+        149,
+        22
+      ],
       "accounts": [
         {
           "name": "merchant",
@@ -555,7 +885,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [112, 114, 111, 116, 111, 99, 111, 108]
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
@@ -573,7 +912,9 @@
         {
           "name": "mint",
           "writable": true,
-          "relations": ["protocol_config"]
+          "relations": [
+            "protocol_config"
+          ]
         },
         {
           "name": "merchant_account",
@@ -582,7 +923,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [109, 101, 114, 99, 104, 97, 110, 116]
+                "value": [
+                  109,
+                  101,
+                  114,
+                  99,
+                  104,
+                  97,
+                  110,
+                  116
+                ]
               },
               {
                 "kind": "account",
@@ -603,9 +953,38 @@
               {
                 "kind": "const",
                 "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
                 ]
               },
               {
@@ -616,9 +995,38 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
@@ -630,7 +1038,18 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 100, 101, 109, 112, 116, 105, 111, 110]
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  109,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
               },
               {
                 "kind": "account",
@@ -658,32 +1077,329 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "update_merchant_status",
+      "discriminator": [
+        62,
+        71,
+        105,
+        167,
+        0,
+        182,
+        53,
+        13
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        },
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "admin"
+              }
+            ]
+          }
+        },
+        {
+          "name": "merchant_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "status",
+          "type": {
+            "defined": {
+              "name": "MerchantStatus"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_protocol_fee",
+      "discriminator": [
+        170,
+        136,
+        6,
+        60,
+        43,
+        130,
+        81,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        },
+        {
+          "name": "protocol_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "admin"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "new_fee_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "update_traveler_status",
+      "discriminator": [
+        136,
+        97,
+        239,
+        225,
+        135,
+        226,
+        116,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "protocol_config"
+          ]
+        },
+        {
+          "name": "protocol_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "admin"
+              }
+            ]
+          }
+        },
+        {
+          "name": "traveler_account",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "status",
+          "type": {
+            "defined": {
+              "name": "TravelerStatus"
+            }
+          }
+        }
+      ]
     }
   ],
   "accounts": [
     {
       "name": "MerchantAccount",
-      "discriminator": [182, 10, 106, 140, 73, 79, 234, 186]
+      "discriminator": [
+        182,
+        10,
+        106,
+        140,
+        73,
+        79,
+        234,
+        186
+      ]
     },
     {
       "name": "PaymentReceipt",
-      "discriminator": [168, 198, 209, 4, 60, 235, 126, 109]
+      "discriminator": [
+        168,
+        198,
+        209,
+        4,
+        60,
+        235,
+        126,
+        109
+      ]
     },
     {
       "name": "ProtocolConfig",
-      "discriminator": [207, 91, 250, 28, 152, 179, 215, 209]
+      "discriminator": [
+        207,
+        91,
+        250,
+        28,
+        152,
+        179,
+        215,
+        209
+      ]
     },
     {
       "name": "RedemptionRequest",
-      "discriminator": [117, 157, 214, 214, 64, 160, 31, 58]
+      "discriminator": [
+        117,
+        157,
+        214,
+        214,
+        64,
+        160,
+        31,
+        58
+      ]
     },
     {
       "name": "TravelerAccount",
-      "discriminator": [219, 214, 151, 247, 41, 33, 182, 51]
+      "discriminator": [
+        219,
+        214,
+        151,
+        247,
+        41,
+        33,
+        182,
+        51
+      ]
     },
     {
       "name": "Treasury",
-      "discriminator": [238, 239, 123, 238, 89, 1, 168, 253]
+      "discriminator": [
+        238,
+        239,
+        123,
+        238,
+        89,
+        1,
+        168,
+        253
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "CreditsMinted",
+      "discriminator": [
+        156,
+        94,
+        140,
+        137,
+        170,
+        35,
+        173,
+        244
+      ]
+    },
+    {
+      "name": "MerchantPaid",
+      "discriminator": [
+        112,
+        25,
+        249,
+        161,
+        169,
+        110,
+        224,
+        171
+      ]
+    },
+    {
+      "name": "ProtocolInitialized",
+      "discriminator": [
+        173,
+        122,
+        168,
+        254,
+        9,
+        118,
+        76,
+        132
+      ]
+    },
+    {
+      "name": "RedemptionApproved",
+      "discriminator": [
+        191,
+        217,
+        243,
+        104,
+        169,
+        53,
+        122,
+        185
+      ]
+    },
+    {
+      "name": "RedemptionRequested",
+      "discriminator": [
+        245,
+        155,
+        98,
+        131,
+        210,
+        25,
+        137,
+        146
+      ]
     }
   ],
   "errors": [
@@ -720,6 +1436,26 @@
   ],
   "types": [
     {
+      "name": "CreditsMinted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "traveler",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
       "name": "MerchantAccount",
       "type": {
         "kind": "struct",
@@ -751,6 +1487,38 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MerchantPaid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "traveler",
+            "type": "pubkey"
+          },
+          {
+            "name": "merchant",
+            "type": "pubkey"
+          },
+          {
+            "name": "gross_amount",
+            "type": "u64"
+          },
+          {
+            "name": "merchant_amount",
+            "type": "u64"
+          },
+          {
+            "name": "protocol_fee",
+            "type": "u64"
+          },
+          {
+            "name": "receipt",
+            "type": "pubkey"
           }
         ]
       }
@@ -837,6 +1605,54 @@
       }
     },
     {
+      "name": "ProtocolInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedemptionApproved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "merchant",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "redemption_request",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
       "name": "RedemptionRequest",
       "type": {
         "kind": "struct",
@@ -860,6 +1676,26 @@
           {
             "name": "bump",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedemptionRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "merchant",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "redemption_request",
+            "type": "pubkey"
           }
         ]
       }

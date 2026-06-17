@@ -82,6 +82,12 @@ impl<'info> RequestRedemption<'info> {
             bump: bumps.redemption_request,
         });
 
+        emit!(RedemptionRequested {
+            merchant: self.merchant.key(),
+            amount,
+            redemption_request: self.redemption_request.key(),
+        });
+
         Ok(())
     }
 }
