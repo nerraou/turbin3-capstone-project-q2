@@ -16,6 +16,9 @@ pub struct RequestRedemption<'info> {
     )]
     pub protocol_config: Account<'info, ProtocolConfig>,
 
+    #[account(mut, address = protocol_config.admin)]
+    pub payer: Signer<'info>,
+
     #[account(mut, address = protocol_config.mint)]
     pub mint: InterfaceAccount<'info, Mint>,
 
@@ -35,7 +38,7 @@ pub struct RequestRedemption<'info> {
 
     #[account(
         init,
-        payer = merchant,
+        payer = payer,
         space = RedemptionRequest::DISCRIMINATOR.len() + RedemptionRequest::INIT_SPACE,
         seeds = [
             REDEMPTION_SEED,

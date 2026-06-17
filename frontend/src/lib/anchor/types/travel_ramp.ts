@@ -701,6 +701,11 @@ export type TravelRamp = {
           };
         },
         {
+          name: "payer";
+          writable: true;
+          signer: true;
+        },
+        {
           name: "mint";
           writable: true;
           relations: ["protocolConfig"];

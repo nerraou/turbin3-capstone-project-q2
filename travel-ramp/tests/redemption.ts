@@ -26,7 +26,6 @@ async function setupMerchantWithCredits() {
   const merchantAmount = payAmount.sub(protocolFee);
 
   await fundAccount(admin.publicKey);
-  await fundAccount(merchantWallet.publicKey);
 
   const [protocolConfig] = findProtocolConfigPda(admin.publicKey);
   const [treasury] = findTreasuryPda(protocolConfig);
@@ -153,6 +152,7 @@ describe("redemption", () => {
       .accountsPartial({
         merchant: setup.merchantWallet.publicKey,
         protocolConfig: setup.protocolConfig,
+        payer: setup.admin.publicKey,
         mint: setup.mint.publicKey,
         merchantAccount: setup.merchantAccount,
         merchantAta: setup.merchantAta,
@@ -160,7 +160,7 @@ describe("redemption", () => {
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([setup.merchantWallet])
+      .signers([setup.admin, setup.merchantWallet])
       .rpc();
     await confirmTx(tx);
 
@@ -196,6 +196,7 @@ describe("redemption", () => {
       .accountsPartial({
         merchant: setup.merchantWallet.publicKey,
         protocolConfig: setup.protocolConfig,
+        payer: setup.admin.publicKey,
         mint: setup.mint.publicKey,
         merchantAccount: setup.merchantAccount,
         merchantAta: setup.merchantAta,
@@ -203,7 +204,7 @@ describe("redemption", () => {
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([setup.merchantWallet])
+      .signers([setup.admin, setup.merchantWallet])
       .rpc();
     await confirmTx(tx);
 
