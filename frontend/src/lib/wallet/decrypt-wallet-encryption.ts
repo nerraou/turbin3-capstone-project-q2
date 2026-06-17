@@ -1,3 +1,4 @@
+import { Keypair } from "@solana/web3.js";
 import { ALGO } from "./consts";
 import { decrypt } from "./decrypt";
 
@@ -10,15 +11,10 @@ export async function decryptWalletEncryption(
 
   const privateKey = decrypt(dek, encryptedPrivateKey, ALGO);
 
-  const jwkKey = await crypto.subtle.importKey(
-    "jwk",
-    JSON.parse(privateKey.toString("utf-8")) as JsonWebKey,
-    {
-      name: "Ed25519",
-    },
-    false,
-    ["sign"],
-  );
+  const jwk = JSON.parse(privateKey.toString("utf-8")) as JsonWebKey;
 
-  return jwkKey;
+  const seed = Buffer.from(jwk.d!, "base64url");
+  const keypair = Keypair.fromSeed(seed);
+
+  return keypair;
 }

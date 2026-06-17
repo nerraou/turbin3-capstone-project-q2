@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { NextResponse } from "next/server";
 import { type LoginApiData } from "./login-api-data-schema";
 
-const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
+export const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
 
 export interface LoginHandlerReturn {
   message: string;
@@ -18,7 +18,7 @@ async function createResponse(
   accessToken?: string,
 ): Promise<NextResponse<LoginHandlerReturn>> {
   if (accessToken) {
-    setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
+    await setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
   }
 
   return NextResponse.json({ message }, { status });

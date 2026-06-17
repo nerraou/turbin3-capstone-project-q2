@@ -334,21 +334,6 @@ export type TravelRamp = {
           name: "merchantWallet";
         },
         {
-          name: "treasury";
-          pda: {
-            seeds: [
-              {
-                kind: "const";
-                value: [116, 114, 101, 97, 115, 117, 114, 121];
-              },
-              {
-                kind: "account";
-                path: "protocolConfig";
-              },
-            ];
-          };
-        },
-        {
           name: "protocolConfig";
           pda: {
             seeds: [
@@ -360,6 +345,26 @@ export type TravelRamp = {
                 kind: "account";
                 path: "protocol_config.admin";
                 account: "protocolConfig";
+              },
+            ];
+          };
+        },
+        {
+          name: "payer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "treasury";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [116, 114, 101, 97, 115, 117, 114, 121];
+              },
+              {
+                kind: "account";
+                path: "protocolConfig";
               },
             ];
           };
