@@ -8,8 +8,10 @@ import {
   PROTOCOL_SEED,
   REDEMPTION_SEED,
 } from "@lib/anchor";
+import { approveRedemptionRequest } from "@lib/database/repositories";
 import { checkUserPermission } from "@lib/login-utils";
 import { StatusCodes } from "http-status-codes";
+import approveRedemptionApiDataSchema from "./approve-redemption-api-data-schema";
 
 function parsePublicKey(value: unknown, fieldName: string) {
   if (typeof value !== "string" || value.trim().length === 0) {
@@ -53,13 +55,28 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+    const parseResult = approveRedemptionApiDataSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            parseResult.error.issues[0]?.message ?? "Invalid request body",
+        },
+        { status: StatusCodes.UNPROCESSABLE_ENTITY },
+      );
+    }
 
     let merchantWallet: PublicKey;
     let bodyRedemptionId: anchor.BN | undefined;
 
     try {
-      merchantWallet = parsePublicKey(body.merchantWallet, "merchantWallet");
-      bodyRedemptionId = parseRedemptionId(body.redemptionId);
+      merchantWallet = parsePublicKey(
+        parseResult.data.merchantWallet,
+        "merchantWallet",
+      );
+      bodyRedemptionId = parseRedemptionId(parseResult.data.redemptionId);
     } catch (error) {
       return NextResponse.json(
         {
@@ -130,6 +147,12 @@ export async function POST(req: Request) {
         redemptionRequest,
       })
       .rpc();
+
+    await approveRedemptionRequest(
+      merchantWallet.toBase58(),
+      redemptionId.toString(),
+      tx,
+    );
 
     return NextResponse.json({
       success: true,
