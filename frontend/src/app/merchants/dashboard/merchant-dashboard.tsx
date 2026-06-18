@@ -13,6 +13,9 @@ import {
   StatusPill,
   titleCase,
 } from "@components/dashboard/dashboard-ui";
+import InputFormController from "@components/input-form-controller";
+import { Alert, AlertDescription } from "@components/ui/alert";
+import { Button } from "@components/ui/button";
 import {
   Card,
   CardContent,
@@ -21,7 +24,10 @@ import {
   CardTitle,
 } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
-import { useQuery } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface PaymentReceiptView {
   receipt: string;
@@ -70,15 +76,80 @@ async function fetchMerchantDashboard() {
   return data;
 }
 
+const requestRedemptionFormSchema = z.object({
+  amountUsd: z
+    .string()
+    .trim()
+    .regex(/^\d+(\.\d{1,6})?$/, "Use up to 6 decimals, for example 25.50")
+    .refine((value) => Number(value) > 0, "Amount must be greater than zero"),
+});
+
+type RequestRedemptionFormValues = z.infer<
+  typeof requestRedemptionFormSchema
+>;
+
+interface RequestRedemptionResponse {
+  success: boolean;
+  error?: string;
+  redemptionId?: string;
+}
+
+async function requestRedemption(data: RequestRedemptionFormValues) {
+  const response = await fetch("/api/redemptions/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const responseData = (await response.json()) as RequestRedemptionResponse;
+
+  if (!response.ok || !responseData.success) {
+    throw new Error(responseData.error ?? "Failed to request redemption");
+  }
+
+  return responseData;
+}
+
 function formatDate(timestamp: string) {
   return new Date(Number(timestamp) * 1000).toLocaleString();
 }
 
 export default function MerchantDashboard() {
+  const queryClient = useQueryClient();
   const dashboardQuery = useQuery({
     queryKey: ["merchant-dashboard"],
     queryFn: fetchMerchantDashboard,
   });
+  const requestForm = useForm<RequestRedemptionFormValues>({
+    resolver: zodResolver(requestRedemptionFormSchema),
+    defaultValues: {
+      amountUsd: "",
+    },
+  });
+  const requestRedemptionMutation = useMutation({
+    mutationFn: requestRedemption,
+    onSuccess: async () => {
+      requestForm.reset();
+      await queryClient.invalidateQueries({
+        queryKey: ["merchant-dashboard"],
+      });
+    },
+  });
+
+  function onRequestRedemptionSubmit(data: RequestRedemptionFormValues) {
+    if (
+      dashboardQuery.data &&
+      Number(data.amountUsd) > Number(dashboardQuery.data.balance.amountUsd)
+    ) {
+      requestForm.setError("amountUsd", {
+        message: `Available balance is $${dashboardQuery.data.balance.amountUsd}`,
+      });
+      return;
+    }
+
+    requestRedemptionMutation.mutate(data);
+  }
 
   return (
     <DashboardShell
@@ -130,27 +201,88 @@ export default function MerchantDashboard() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
-            <InfoCard
-              title="Account"
-              rows={[
-                {
-                  label: "Wallet",
-                  value: dashboardQuery.data.merchantWallet,
-                },
-                {
-                  label: "Merchant PDA",
-                  value: dashboardQuery.data.merchantAccount,
-                },
-                {
-                  label: "Token ATA",
-                  value: dashboardQuery.data.balance.ata,
-                },
-                {
-                  label: "Redemptions",
-                  value: dashboardQuery.data.redemptionCount,
-                },
-              ]}
-            />
+            <div className="space-y-4">
+              <InfoCard
+                title="Account"
+                rows={[
+                  {
+                    label: "Wallet",
+                    value: dashboardQuery.data.merchantWallet,
+                  },
+                  {
+                    label: "Merchant PDA",
+                    value: dashboardQuery.data.merchantAccount,
+                  },
+                  {
+                    label: "Token ATA",
+                    value: dashboardQuery.data.balance.ata,
+                  },
+                  {
+                    label: "Redemptions",
+                    value: dashboardQuery.data.redemptionCount,
+                  },
+                ]}
+              />
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Request Redemption</CardTitle>
+                  <CardDescription>
+                    Burn merchant TravelUSD and create a pending admin approval.
+                  </CardDescription>
+                </CardHeader>
+                <Separator />
+                <CardContent className="space-y-4 pt-4">
+                  {requestRedemptionMutation.isSuccess ? (
+                    <Alert>
+                      <AlertDescription>
+                        Redemption #{requestRedemptionMutation.data.redemptionId}{" "}
+                        requested.
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
+
+                  {requestRedemptionMutation.isError ? (
+                    <Alert variant="destructive">
+                      <AlertDescription>
+                        {requestRedemptionMutation.error.message}
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
+
+                  <form
+                    className="space-y-4"
+                    onSubmit={requestForm.handleSubmit(
+                      onRequestRedemptionSubmit,
+                    )}
+                  >
+                    <InputFormController
+                      control={requestForm.control}
+                      name="amountUsd"
+                      label="Amount"
+                      inputProps={{
+                        inputMode: "decimal",
+                        placeholder: dashboardQuery.data.balance.amountUsd,
+                      }}
+                    />
+
+                    <p className="text-xs text-muted-foreground">
+                      Available: {formatUsd(dashboardQuery.data.balance)}
+                    </p>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={requestRedemptionMutation.isPending}
+                    >
+                      {requestRedemptionMutation.isPending
+                        ? "Requesting..."
+                        : "Request Redemption"}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
 
             <Card>
               <CardHeader>
