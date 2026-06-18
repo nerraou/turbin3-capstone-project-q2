@@ -32,7 +32,7 @@ pub struct InitializeProtocol<'info> {
     #[account(
         init,
         payer = admin,
-        mint::decimals = 6,
+        mint::decimals = TRAVEL_USD_DECIMALS,
         mint::authority = treasury,
         mint::freeze_authority = treasury
     )]

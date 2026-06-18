@@ -1,10 +1,10 @@
 import * as anchor from "@coral-xyz/anchor";
-import { NextResponse } from "next/server";
-import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
+import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { NextResponse } from "next/server";
 
 import {
   getAnchorProgram,
@@ -62,15 +62,15 @@ export async function POST(req: Request) {
       TOKEN_PROGRAM_ID,
     );
 
-    const totalRedeemed = new anchor.BN(
-      merchantAccountData.totalRedeemed.toString(),
+    const redemptionCount = new anchor.BN(
+      merchantAccountData.redemptionCount.toString(),
     );
 
     const [redemptionRequest] = PublicKey.findProgramAddressSync(
       [
         Buffer.from(REDEMPTION_SEED),
         merchantWallet.publicKey.toBuffer(),
-        totalRedeemed.toArrayLike(Buffer, "le", 8),
+        redemptionCount.toArrayLike(Buffer, "le", 8),
       ],
       program.programId,
     );
