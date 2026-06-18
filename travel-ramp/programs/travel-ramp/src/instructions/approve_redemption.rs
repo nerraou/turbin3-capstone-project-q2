@@ -25,7 +25,7 @@ pub struct ApproveRedemption<'info> {
         seeds = [
            REDEMPTION_SEED,
             redemption_request.merchant.as_ref(),
-            merchant_account.total_redeemed.to_le_bytes().as_ref()
+            redemption_request.id.to_le_bytes().as_ref()
         ],
         bump = redemption_request.bump
     )]

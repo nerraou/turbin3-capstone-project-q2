@@ -15,5 +15,6 @@ pub struct MerchantAccount {
     pub status: MerchantStatus,
     pub total_received: u64,
     pub total_redeemed: u64,
+    pub redemption_count: u64,
     pub bump: u8,
 }

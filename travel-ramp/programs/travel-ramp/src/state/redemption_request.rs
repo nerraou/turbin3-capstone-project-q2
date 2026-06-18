@@ -10,6 +10,7 @@ pub enum RedemptionStatus {
 #[derive(InitSpace)]
 pub struct RedemptionRequest {
     pub merchant: Pubkey,
+    pub id: u64,
     pub amount: u64,
     pub status: RedemptionStatus,
     pub bump: u8,

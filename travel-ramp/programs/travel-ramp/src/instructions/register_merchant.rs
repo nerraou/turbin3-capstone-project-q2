@@ -31,6 +31,7 @@ impl<'info> RegisterMerchant<'info> {
             status: MerchantStatus::Approved,
             total_received: 0,
             total_redeemed: 0,
+            redemption_count: 0,
             bump: bumps.merchant_account,
         });
 
