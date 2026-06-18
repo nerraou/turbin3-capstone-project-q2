@@ -2,6 +2,7 @@ import * as anchor from "@anchor-lang/core";
 import { expect } from "chai";
 import {
   confirmTx,
+  expectAnchorError,
   findProtocolConfigPda,
   findTreasuryPda,
   fundAccount,
@@ -16,7 +17,9 @@ describe("initialize_protocol", () => {
 
     await fundAccount(admin.publicKey);
 
-    const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(admin.publicKey);
+    const [protocolConfig, protocolConfigBump] = findProtocolConfigPda(
+      admin.publicKey,
+    );
     const [treasury, treasuryBump] = findTreasuryPda(protocolConfig);
 
     const tx = await program.methods
@@ -46,5 +49,32 @@ describe("initialize_protocol", () => {
     expect(treasuryAccount.authority.equals(admin.publicKey)).to.equal(true);
     expect(treasuryAccount.totalSupply.toNumber()).to.equal(0);
     expect(treasuryAccount.bump).to.equal(treasuryBump);
+  });
+
+  it("rejects protocol fees above the maximum", async () => {
+    const admin = anchor.web3.Keypair.generate();
+    const mint = anchor.web3.Keypair.generate();
+    const invalidFeeBps = 1001;
+
+    await fundAccount(admin.publicKey);
+
+    const [protocolConfig] = findProtocolConfigPda(admin.publicKey);
+    const [treasury] = findTreasuryPda(protocolConfig);
+
+    await expectAnchorError(
+      program.methods
+        .initializeProtocol(invalidFeeBps)
+        .accountsPartial({
+          admin: admin.publicKey,
+          protocolConfig,
+          treasury,
+          travelCreditMint: mint.publicKey,
+          tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .signers([admin, mint])
+        .rpc(),
+      "InvalidFee",
+    );
   });
 });

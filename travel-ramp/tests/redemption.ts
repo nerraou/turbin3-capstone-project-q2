@@ -2,6 +2,7 @@ import * as anchor from "@anchor-lang/core";
 import { expect } from "chai";
 import {
   confirmTx,
+  expectAnchorError,
   findMerchantPda,
   findPaymentReceiptPda,
   findProtocolConfigPda,
@@ -175,11 +176,77 @@ describe("redemption", () => {
     expect(request.merchant.equals(setup.merchantWallet.publicKey)).to.equal(
       true,
     );
+    expect(request.id.toString()).to.equal("0");
     expect(request.amount.toString()).to.equal(redemptionAmount.toString());
     expect(request.status).to.deep.equal({ pending: {} });
     expect(request.bump).to.equal(redemptionBump);
     expect(merchantBalance.value.amount).to.equal(
       setup.payAmount.sub(redemptionAmount).toString(),
+    );
+  });
+
+  it("rejects requesting a zero amount redemption", async () => {
+    const setup = await setupMerchantWithCredits();
+    const [redemptionRequest] = findRedemptionPda(
+      setup.merchantWallet.publicKey,
+      new anchor.BN(0),
+    );
+
+    await expectAnchorError(
+      program.methods
+        .requestRedemption(new anchor.BN(0))
+        .accountsPartial({
+          merchant: setup.merchantWallet.publicKey,
+          protocolConfig: setup.protocolConfig,
+          payer: setup.admin.publicKey,
+          mint: setup.mint.publicKey,
+          merchantAccount: setup.merchantAccount,
+          merchantAta: setup.merchantAta,
+          redemptionRequest,
+          tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .signers([setup.admin, setup.merchantWallet])
+        .rpc(),
+      "InvalidAmount",
+    );
+  });
+
+  it("rejects redemption requests from a suspended merchant", async () => {
+    const setup = await setupMerchantWithCredits();
+    const [redemptionRequest] = findRedemptionPda(
+      setup.merchantWallet.publicKey,
+      new anchor.BN(0),
+    );
+
+    const tx = await program.methods
+      .updateMerchantStatus({ suspended: {} })
+      .accountsPartial({
+        admin: setup.admin.publicKey,
+        protocolConfig: setup.protocolConfig,
+        merchantAccount: setup.merchantAccount,
+      })
+      .signers([setup.admin])
+      .rpc();
+    await confirmTx(tx);
+
+    await expectAnchorError(
+      program.methods
+        .requestRedemption(new anchor.BN(1))
+        .accountsPartial({
+          merchant: setup.merchantWallet.publicKey,
+          protocolConfig: setup.protocolConfig,
+          payer: setup.admin.publicKey,
+          mint: setup.mint.publicKey,
+          merchantAccount: setup.merchantAccount,
+          merchantAta: setup.merchantAta,
+          redemptionRequest,
+          tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .signers([setup.admin, setup.merchantWallet])
+        .rpc(),
+      "MerchantNotApproved",
     );
   });
 
@@ -230,6 +297,58 @@ describe("redemption", () => {
     expect(request.status).to.deep.equal({ approved: {} });
     expect(merchant.totalRedeemed.toString()).to.equal(
       redemptionAmount.toString(),
+    );
+  });
+
+  it("rejects approving an already approved redemption", async () => {
+    const setup = await setupMerchantWithCredits();
+    const redemptionAmount = new anchor.BN(175_000);
+    const [redemptionRequest] = findRedemptionPda(
+      setup.merchantWallet.publicKey,
+      new anchor.BN(0),
+    );
+
+    let tx = await program.methods
+      .requestRedemption(redemptionAmount)
+      .accountsPartial({
+        merchant: setup.merchantWallet.publicKey,
+        protocolConfig: setup.protocolConfig,
+        payer: setup.admin.publicKey,
+        mint: setup.mint.publicKey,
+        merchantAccount: setup.merchantAccount,
+        merchantAta: setup.merchantAta,
+        redemptionRequest,
+        tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([setup.admin, setup.merchantWallet])
+      .rpc();
+    await confirmTx(tx);
+
+    tx = await program.methods
+      .approveRedemption()
+      .accountsPartial({
+        admin: setup.admin.publicKey,
+        protocolConfig: setup.protocolConfig,
+        merchantAccount: setup.merchantAccount,
+        redemptionRequest,
+      })
+      .signers([setup.admin])
+      .rpc();
+    await confirmTx(tx);
+
+    await expectAnchorError(
+      program.methods
+        .approveRedemption()
+        .accountsPartial({
+          admin: setup.admin.publicKey,
+          protocolConfig: setup.protocolConfig,
+          merchantAccount: setup.merchantAccount,
+          redemptionRequest,
+        })
+        .signers([setup.admin])
+        .rpc(),
+      "InvalidRedemptionStatus",
     );
   });
 });

@@ -1,4 +1,5 @@
 import * as anchor from "@anchor-lang/core";
+import { expect } from "chai";
 import { TravelRamp } from "../target/types/travel_ramp";
 
 export const provider = anchor.AnchorProvider.env();
@@ -39,6 +40,23 @@ export async function fundAccount(
   await confirmTx(tx);
 }
 
+export async function expectAnchorError(
+  promise: Promise<unknown>,
+  expectedCode: string,
+) {
+  try {
+    await promise;
+    expect.fail(`Expected Anchor error ${expectedCode}`);
+  } catch (error) {
+    const anchorCode =
+      (error as { error?: { errorCode?: { code?: string } } }).error?.errorCode
+        ?.code ?? (error as { errorCode?: { code?: string } }).errorCode?.code;
+    const message = error instanceof Error ? error.message : String(error);
+
+    expect(anchorCode ?? message).to.contain(expectedCode);
+  }
+}
+
 export function findProtocolConfigPda(admin: anchor.web3.PublicKey) {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [seeds.protocol, admin.toBuffer()],
@@ -69,13 +87,13 @@ export function findMerchantPda(merchant: anchor.web3.PublicKey) {
 
 export function findRedemptionPda(
   merchant: anchor.web3.PublicKey,
-  totalRedeemed: anchor.BN,
+  redemptionId: anchor.BN,
 ) {
   return anchor.web3.PublicKey.findProgramAddressSync(
     [
       seeds.redemption,
       merchant.toBuffer(),
-      totalRedeemed.toArrayLike(Buffer, "le", 8),
+      redemptionId.toArrayLike(Buffer, "le", 8),
     ],
     program.programId,
   );
