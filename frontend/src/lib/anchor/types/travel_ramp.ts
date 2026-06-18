@@ -111,8 +111,8 @@ export type TravelRamp = {
               },
               {
                 "kind": "account",
-                "path": "merchant_account.total_redeemed",
-                "account": "merchantAccount"
+                "path": "redemption_request.id",
+                "account": "redemptionRequest"
               }
             ]
           }
@@ -1063,7 +1063,7 @@ export type TravelRamp = {
               },
               {
                 "kind": "account",
-                "path": "merchant_account.total_redeemed",
+                "path": "merchant_account.redemption_count",
                 "account": "merchantAccount"
               }
             ]
@@ -1491,6 +1491,10 @@ export type TravelRamp = {
             "type": "u64"
           },
           {
+            "name": "redemptionCount",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
@@ -1666,6 +1670,10 @@ export type TravelRamp = {
           {
             "name": "merchant",
             "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "u64"
           },
           {
             "name": "amount",

@@ -105,8 +105,8 @@
               },
               {
                 "kind": "account",
-                "path": "merchant_account.total_redeemed",
-                "account": "MerchantAccount"
+                "path": "redemption_request.id",
+                "account": "RedemptionRequest"
               }
             ]
           }
@@ -1057,7 +1057,7 @@
               },
               {
                 "kind": "account",
-                "path": "merchant_account.total_redeemed",
+                "path": "merchant_account.redemption_count",
                 "account": "MerchantAccount"
               }
             ]
@@ -1485,6 +1485,10 @@
             "type": "u64"
           },
           {
+            "name": "redemption_count",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
@@ -1660,6 +1664,10 @@
           {
             "name": "merchant",
             "type": "pubkey"
+          },
+          {
+            "name": "id",
+            "type": "u64"
           },
           {
             "name": "amount",
