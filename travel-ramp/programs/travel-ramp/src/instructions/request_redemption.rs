@@ -43,7 +43,7 @@ pub struct RequestRedemption<'info> {
         seeds = [
             REDEMPTION_SEED,
             merchant.key().as_ref(),
-            merchant_account.total_redeemed.to_le_bytes().as_ref()
+            merchant_account.redemption_count.to_le_bytes().as_ref()
         ],
         bump
     )]
@@ -75,12 +75,21 @@ impl<'info> RequestRedemption<'info> {
 
         burn(cpi_ctx, amount)?;
 
+        let redemption_id = self.merchant_account.redemption_count;
+
         self.redemption_request.set_inner(RedemptionRequest {
             merchant: self.merchant.key(),
+            id: redemption_id,
             amount,
             status: RedemptionStatus::Pending,
             bump: bumps.redemption_request,
         });
+
+        self.merchant_account.redemption_count = self
+            .merchant_account
+            .redemption_count
+            .checked_add(1)
+            .ok_or(TravelRampError::Overflow)?;
 
         emit!(RedemptionRequested {
             merchant: self.merchant.key(),
