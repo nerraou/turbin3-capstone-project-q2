@@ -1,5 +1,10 @@
 import { checkUserPermission, redirectToLogin } from "@lib/login-utils";
+import { randomBytes } from "crypto";
 import TravelerDashboard from "./traveler-dashboard";
+
+function generatePaymentReference() {
+  return `PAY-${Date.now()}-${randomBytes(3).toString("hex").toUpperCase()}`;
+}
 
 export default async function TravelerDashboardPage() {
   const { status } = await checkUserPermission(["traveler"]);
@@ -8,5 +13,7 @@ export default async function TravelerDashboardPage() {
     redirectToLogin("/travelers/dashboard");
   }
 
-  return <TravelerDashboard />;
+  const paymentReference = generatePaymentReference();
+
+  return <TravelerDashboard paymentReference={paymentReference} />;
 }

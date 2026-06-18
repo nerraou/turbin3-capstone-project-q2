@@ -89,7 +89,7 @@ export function StatCard({
 }: {
   label: string;
   value: string;
-  detail?: string;
+  detail?: ReactNode;
 }) {
   return (
     <Card>

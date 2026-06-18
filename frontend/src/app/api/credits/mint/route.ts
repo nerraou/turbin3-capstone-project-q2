@@ -1,84 +1,41 @@
-import * as anchor from "@coral-xyz/anchor";
-import {
-  getAnchorProgram,
-  PROTOCOL_SEED,
-  TRAVELER_SEED,
-  TREASURY_SEED,
-} from "@lib/anchor";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  getAssociatedTokenAddressSync,
-  TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { NextResponse } from "next/server";
+import { StatusCodes } from "http-status-codes";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+import { mintCreditsHandler } from "./mint-credits-handler";
+import mintCreditsSchema from "./mint-credits-schema";
+import { checkUserPermission } from "@lib/login-utils";
 
-    const travelerWallet = new PublicKey(body.travelerWallet);
-    const amount = new anchor.BN(body.amount);
+export async function POST(req: NextRequest) {
+  const { status } = await checkUserPermission(["admin"]);
 
-    const { program, wallet } = getAnchorProgram();
-
-    const protocolConfig = PublicKey.findProgramAddressSync(
-      [Buffer.from(PROTOCOL_SEED), wallet.publicKey.toBuffer()],
-      program.programId,
-    )[0];
-
-    const treasury = PublicKey.findProgramAddressSync(
-      [Buffer.from(TREASURY_SEED), protocolConfig.toBuffer()],
-      program.programId,
-    )[0];
-
-    const travelerAccount = PublicKey.findProgramAddressSync(
-      [Buffer.from(TRAVELER_SEED), travelerWallet.toBuffer()],
-      program.programId,
-    )[0];
-
-    console.log("protocolConfig:", protocolConfig.toBase58());
-    console.log("travelerAccount:", travelerAccount.toBase58());
-    console.log("travelerWallet:", travelerWallet.toBase58());
-
-    const protocolConfigAccount =
-      await program.account.protocolConfig.fetch(protocolConfig);
-
-    const mint = protocolConfigAccount.mint as PublicKey;
-
-    const travelerAta = getAssociatedTokenAddressSync(
-      mint,
-      travelerWallet,
-      false,
-      TOKEN_PROGRAM_ID,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
+  if (status !== "ok") {
+    return NextResponse.json(
+      {
+        message: "Unauthorized",
+      },
+      {
+        status: StatusCodes.UNAUTHORIZED,
+      },
     );
+  }
 
-    const tx = await program.methods
-      .mintCredits(amount)
-      .accountsPartial({
-        admin: wallet.publicKey,
-        protocolConfig,
-        treasury,
-        mint,
-        travelerAccount,
-        travelerWallet,
-        travelerAta,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-        systemProgram: SystemProgram.programId,
-      })
-      .rpc();
+  const { success, error, data } = mintCreditsSchema.safeParse(
+    await req.json(),
+  );
 
-    return NextResponse.json({
-      success: true,
-      tx,
-      travelerWallet: travelerWallet.toBase58(),
-      travelerAccount: travelerAccount.toBase58(),
-      travelerAta: travelerAta.toBase58(),
-      mint: mint.toBase58(),
-      amount: amount.toString(),
-    });
+  try {
+    if (success) {
+      return mintCreditsHandler(data);
+    } else {
+      return NextResponse.json(
+        {
+          error: error.issues,
+        },
+        {
+          status: StatusCodes.UNPROCESSABLE_ENTITY,
+        },
+      );
+    }
   } catch (error) {
     console.error("Mint credits error:", error);
 

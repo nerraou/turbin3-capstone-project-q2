@@ -217,9 +217,12 @@ export default function AdminDashboard() {
 
                 <div className="mt-4 grid gap-2 text-xs text-muted-foreground md:grid-cols-3">
                   <span>
-                    Redemption PDA: {compactAddress(redemption.redemptionRequest)}
+                    Redemption PDA:{" "}
+                    {compactAddress(redemption.redemptionRequest)}
                   </span>
-                  <span>Merchant PDA: {compactAddress(redemption.merchantAccount)}</span>
+                  <span>
+                    Merchant PDA: {compactAddress(redemption.merchantAccount)}
+                  </span>
                   <span>Tx: {compactAddress(redemption.requestTx)}</span>
                 </div>
               </div>
