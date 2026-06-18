@@ -1,6 +1,6 @@
 import { checkUserPermission, redirectToLogin } from "@lib/login-utils";
 import { Suspense } from "react";
-import ConfirmPayment from "./confirm-payment";
+import ConfirmPayment from "../../payments/confirm/confirm-payment";
 
 interface ConfirmPaymentPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -32,7 +32,7 @@ export default async function ConfirmPaymentPage({
   const { status } = await checkUserPermission(["traveler"]);
 
   if (status !== "ok") {
-    redirectToLogin(await buildReturnUrl("/payments/confirm", searchParams));
+    redirectToLogin(await buildReturnUrl("/payment/confirm", searchParams));
   }
 
   return (

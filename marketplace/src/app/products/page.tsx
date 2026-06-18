@@ -1,6 +1,7 @@
 "use client";
 
 import { Package, ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Badge } from "@components/ui/badge";
 import { Button } from "@components/ui/button";
@@ -31,7 +32,8 @@ function getTypeLabel(type: PhysicalProductMetadata["type"]) {
 }
 
 export default function ProductsPage() {
-  const { addItem } = useCart();
+  const router = useRouter();
+  const { addItem, totalItems } = useCart();
 
   function addToCart(product: Product<PhysicalProductMetadata>) {
     addItem(product);
@@ -48,9 +50,14 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        <Button variant="outline">
+        <Button
+          variant="outline"
+          onClick={() => {
+            router.push("/checkout");
+          }}
+        >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Cart
+          Cart ({totalItems})
         </Button>
       </div>
 
@@ -102,6 +109,17 @@ export default function ProductsPage() {
           );
         })}
       </div>
+
+      {totalItems > 0 ? (
+        <Button
+          className="fixed right-6 bottom-6 h-11 shadow-lg"
+          onClick={() => {
+            router.push("/checkout");
+          }}
+        >
+          Checkout ({totalItems})
+        </Button>
+      ) : null}
     </main>
   );
 }
