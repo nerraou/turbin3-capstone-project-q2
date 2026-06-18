@@ -95,10 +95,24 @@ export function LoginForm() {
           </form>
 
           <p className="mt-2 text-center leading-7">
-            New on our platform?{" "}
-            <Link prefetch={false} href="/register" className="font-bold">
-              Create an account
-            </Link>
+            New on our platform? Create a
+            <div>
+              <Link
+                prefetch={false}
+                href="/travelers/register"
+                className="font-bold"
+              >
+                Traveler account
+              </Link>
+              {""} Or{" "}
+              <Link
+                prefetch={false}
+                href="/merchants/register"
+                className="font-bold"
+              >
+                Merchant account
+              </Link>
+            </div>
           </p>
         </CardContent>
       </Card>
