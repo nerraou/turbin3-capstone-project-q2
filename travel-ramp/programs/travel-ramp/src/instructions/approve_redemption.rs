@@ -47,6 +47,12 @@ impl<'info> ApproveRedemption<'info> {
             .checked_add(self.redemption_request.amount)
             .ok_or(TravelRampError::Overflow)?;
 
+        emit!(RedemptionApproved {
+            merchant: self.redemption_request.merchant,
+            amount: self.redemption_request.amount,
+            redemption_request: self.redemption_request.key(),
+        });
+
         Ok(())
     }
 }

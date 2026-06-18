@@ -88,6 +88,12 @@ impl<'info> MintCredits<'info> {
             .checked_add(amount)
             .ok_or(TravelRampError::Overflow)?;
 
+        emit!(CreditsMinted {
+            traveler: self.traveler_wallet.key(),
+            mint: self.mint.key(),
+            amount,
+        });
+
         Ok(())
     }
 }

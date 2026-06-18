@@ -3,6 +3,7 @@ use anchor_spl::token_interface::{Mint, TokenInterface};
 
 use crate::constants::*;
 use crate::error::TravelRampError;
+use crate::events::ProtocolInitialized;
 use crate::state::*;
 
 #[derive(Accounts)]
@@ -63,6 +64,13 @@ impl<'info> InitializeProtocol<'info> {
         });
 
         msg!("Protocol initialized: {}", self.protocol_config.key());
+        emit!(ProtocolInitialized {
+            admin: self.admin.key(),
+            protocol_config: self.protocol_config.key(),
+            treasury: self.treasury.key(),
+            mint: self.travel_credit_mint.key(),
+            fee_bps,
+        });
         Ok(())
     }
 }

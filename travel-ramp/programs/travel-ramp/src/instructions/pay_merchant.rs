@@ -168,6 +168,15 @@ impl<'info> PayMerchant<'info> {
             .checked_add(1)
             .ok_or(TravelRampError::Overflow)?;
 
+        emit!(MerchantPaid {
+            traveler: self.traveler_wallet.key(),
+            merchant: self.merchant_account.wallet,
+            gross_amount: amount,
+            merchant_amount,
+            protocol_fee: fee,
+            receipt: self.payment_receipt.key(),
+        });
+
         Ok(())
     }
 }
