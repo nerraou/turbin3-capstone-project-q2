@@ -3,7 +3,7 @@ import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
 import {
@@ -12,15 +12,51 @@ import {
   PROTOCOL_SEED,
   REDEMPTION_SEED,
 } from "@lib/anchor";
+import { getWalletByUserId } from "@lib/database/repositories";
+import { checkUserPermission } from "@lib/login-utils";
+import {
+  formatTravelUsdFromBaseUnits,
+  getTravelUsdAmountFromBody,
+  TRAVEL_USD_DECIMALS,
+  TRAVEL_USD_SYMBOL,
+} from "@lib/travel-usd";
+import { decryptWalletEncryption } from "@lib/wallet";
+import { StatusCodes } from "http-status-codes";
+
+async function getMerchantWallet(userId: bigint) {
+  const wallet = await getWalletByUserId(userId);
+
+  if (!wallet) {
+    throw new Error("no wallet found");
+  }
+
+  const merchantKeypair = decryptWalletEncryption(
+    Buffer.from(process.env.WALLET_KEK, "hex"),
+    wallet.encryptedPrivateKey,
+    wallet.encryptedDek,
+  );
+
+  return merchantKeypair;
+}
 
 export async function POST(req: Request) {
   try {
+    const { status, payload } = await checkUserPermission(["merchant"]);
+
+    if (status !== "ok") {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: StatusCodes.UNAUTHORIZED },
+      );
+    }
+
     const body = await req.json();
 
-    const merchantSecretKey = Uint8Array.from(body.merchantSecretKey);
-    const merchantWallet = Keypair.fromSecretKey(merchantSecretKey);
+    const merchantWallet = await getMerchantWallet(
+      BigInt(payload.aud.toString()),
+    );
 
-    const amount = new anchor.BN(body.amount);
+    const amount = getTravelUsdAmountFromBody(body);
 
     const { program, wallet, connection } = getAnchorProgram();
 
@@ -38,7 +74,7 @@ export async function POST(req: Request) {
           error: "Protocol is not initialized yet",
           protocolConfig: protocolConfig.toBase58(),
         },
-        { status: 400 },
+        { status: StatusCodes.BAD_REQUEST },
       );
     }
 
@@ -99,6 +135,10 @@ export async function POST(req: Request) {
       merchantAta: merchantAta.toBase58(),
       redemptionRequest: redemptionRequest.toBase58(),
       amount: amount.toString(),
+      amountUsd: formatTravelUsdFromBaseUnits(amount),
+      currency: TRAVEL_USD_SYMBOL,
+      decimals: TRAVEL_USD_DECIMALS,
+      redemptionId: redemptionCount.toString(),
     });
   } catch (error) {
     console.error("Request redemption error:", error);
@@ -108,7 +148,7 @@ export async function POST(req: Request) {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
     );
   }
 }
