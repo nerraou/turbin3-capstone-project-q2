@@ -1,4 +1,4 @@
-import { verifyAccessToken } from "@lib/auth/jwt";
+import { UserJwtPayload, verifyAccessToken } from "@lib/auth/jwt";
 import { getCookie, setHostHttpCookie } from "@lib/cookie-utils";
 import { UserRole } from "@lib/database/schema/users";
 import { redirect } from "next/navigation";
@@ -19,9 +19,15 @@ export async function getAccessTokenPayload() {
   return verifyAccessToken(accessTokenCookie.value);
 }
 
-interface CheckUserPermissionReturn {
-  status: "ok" | "unauthorized" | "forbidden";
-}
+type CheckUserPermissionReturn =
+  | {
+      status: "unauthorized" | "forbidden";
+      payload: undefined;
+    }
+  | {
+      status: "ok";
+      payload: UserJwtPayload;
+    };
 
 export async function checkUserPermission(
   roles: UserRole[],
@@ -31,13 +37,22 @@ export async function checkUserPermission(
   if (!payload) {
     return {
       status: "unauthorized",
+      payload: undefined,
     };
   }
 
   const hasRole = roles.includes(payload.role);
 
+  if (!hasRole) {
+    return {
+      payload: undefined,
+      status: "forbidden",
+    };
+  }
+
   return {
-    status: hasRole ? "ok" : "forbidden",
+    payload,
+    status: "ok",
   };
 }
 
