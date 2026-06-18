@@ -2,13 +2,12 @@ import * as anchor from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
-import { getAnchorProgram } from "@lib/anchor";
-
-export const runtime = "nodejs";
-
-const PROTOCOL_SEED = "protocol";
-const MERCHANT_SEED = "merchant";
-const REDEMPTION_SEED = "redemption";
+import {
+  getAnchorProgram,
+  MERCHANT_SEED,
+  PROTOCOL_SEED,
+  REDEMPTION_SEED,
+} from "@lib/anchor";
 
 export async function POST(req: Request) {
   try {
