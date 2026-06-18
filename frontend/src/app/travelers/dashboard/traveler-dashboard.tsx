@@ -12,6 +12,7 @@ import {
   StatCard,
   StatusPill,
 } from "@components/dashboard/dashboard-ui";
+import { Button } from "@components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,8 +20,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card";
+import { Input } from "@components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui/popover";
 import { Separator } from "@components/ui/separator";
+import { travelUSDToBaseUnits } from "@lib/travel-usd-utils";
 import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 interface PaymentReceiptView {
   receipt: string;
@@ -63,7 +74,85 @@ function formatDate(timestamp: string) {
   return new Date(Number(timestamp) * 1000).toLocaleString();
 }
 
-export default function TravelerDashboard() {
+interface PurchaseBalanceProps {
+  paymentReference: string;
+  wallet: string;
+}
+
+function PurchaseBalance(props: PurchaseBalanceProps) {
+  const { paymentReference, wallet } = props;
+  const [amount, setAmount] = useState("");
+
+  function buildPaymentGatewayUrl() {
+    const parsedAmount = parseInt(amount, 10);
+
+    if (isNaN(parsedAmount)) {
+      return "";
+    }
+
+    const paymentGatewatUrl = process.env.NEXT_PUBLIC_URL;
+    const hostUrl = process.env.NEXT_PUBLIC_HOST_URL;
+
+    const amountInBaseUnit = travelUSDToBaseUnits(parsedAmount);
+
+    const redirectUrl = `${hostUrl}/credits/mint`;
+    const redirectUrlParams = new URLSearchParams({
+      travelerWallet: wallet,
+      amount: amountInBaseUnit.toString(),
+    });
+
+    const queryParams = new URLSearchParams({
+      ref: paymentReference,
+      redirectUrl: `${redirectUrl}?${redirectUrlParams.toString()}`,
+      amount: amount.toString(),
+      currency: "$",
+    });
+
+    return `${paymentGatewatUrl}?${queryParams.toString()}`;
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={
+          <Button size="lg">
+            <Plus />
+            Get More
+          </Button>
+        }
+      />
+
+      <PopoverContent align="end" className="w-80 space-y-4">
+        <div>
+          <h4 className="font-medium">Buy Tokens</h4>
+
+          <p className="text-sm text-muted-foreground">
+            Enter the amount of tokens you want to purchase.
+          </p>
+        </div>
+
+        <Input
+          min={1}
+          placeholder="$100"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+
+        <Button size="lg" className="w-full" disabled={!amount}>
+          <Link className="w-full" href={buildPaymentGatewayUrl()}>
+            Continue to Payment
+          </Link>
+        </Button>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+interface TravelerDashboardProps {
+  paymentReference: string;
+}
+
+export default function TravelerDashboard(props: TravelerDashboardProps) {
   const dashboardQuery = useQuery({
     queryKey: ["traveler-dashboard"],
     queryFn: fetchTravelerDashboard,
@@ -86,7 +175,15 @@ export default function TravelerDashboard() {
             <StatCard
               label="Available Balance"
               value={formatUsd(dashboardQuery.data.balance)}
-              detail={`${dashboardQuery.data.balance.amount} base units`}
+              detail={
+                <div className="flex items-center justify-between">
+                  {dashboardQuery.data.balance.amount} base units
+                  <PurchaseBalance
+                    paymentReference={props.paymentReference}
+                    wallet={dashboardQuery.data.travelerWallet}
+                  />
+                </div>
+              }
             />
             <StatCard
               label="Total Paid"

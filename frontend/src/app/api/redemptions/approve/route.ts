@@ -61,8 +61,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            parseResult.error.issues[0]?.message ?? "Invalid request body",
+          error: parseResult.error.issues[0]?.message ?? "Invalid request body",
         },
         { status: StatusCodes.UNPROCESSABLE_ENTITY },
       );

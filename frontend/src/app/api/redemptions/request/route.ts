@@ -61,8 +61,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            parseResult.error.issues[0]?.message ?? "Invalid request body",
+          error: parseResult.error.issues[0]?.message ?? "Invalid request body",
         },
         { status: StatusCodes.UNPROCESSABLE_ENTITY },
       );
@@ -129,9 +128,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const merchantBalance = await connection.getTokenAccountBalance(
-      merchantAta,
-    );
+    const merchantBalance =
+      await connection.getTokenAccountBalance(merchantAta);
     const availableAmount = BigInt(merchantBalance.value.amount);
     const requestedAmount = BigInt(amount.toString());
 

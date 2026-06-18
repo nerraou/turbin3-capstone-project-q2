@@ -1,5 +1,8 @@
 declare namespace NodeJS {
   interface ProcessEnv {
+    // App
+    NEXT_PUBLIC_HOST_URL: string;
+
     // Database
     DATABASE_HOST: string;
     DATABASE_PORT: string;
@@ -21,5 +24,8 @@ declare namespace NodeJS {
     // App Admin User
     APP_ADMIN_USERNAME: string;
     APP_ADMIN_PASSWORD: string;
+
+    // Payment Gateway
+    NEXT_PUBLIC_URL: string;
   }
 }

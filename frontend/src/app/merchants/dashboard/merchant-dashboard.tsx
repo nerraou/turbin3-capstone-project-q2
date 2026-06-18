@@ -84,9 +84,7 @@ const requestRedemptionFormSchema = z.object({
     .refine((value) => Number(value) > 0, "Amount must be greater than zero"),
 });
 
-type RequestRedemptionFormValues = z.infer<
-  typeof requestRedemptionFormSchema
->;
+type RequestRedemptionFormValues = z.infer<typeof requestRedemptionFormSchema>;
 
 interface RequestRedemptionResponse {
   success: boolean;
@@ -236,8 +234,8 @@ export default function MerchantDashboard() {
                   {requestRedemptionMutation.isSuccess ? (
                     <Alert>
                       <AlertDescription>
-                        Redemption #{requestRedemptionMutation.data.redemptionId}{" "}
-                        requested.
+                        Redemption #
+                        {requestRedemptionMutation.data.redemptionId} requested.
                       </AlertDescription>
                     </Alert>
                   ) : null}
