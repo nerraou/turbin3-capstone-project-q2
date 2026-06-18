@@ -43,15 +43,26 @@ export async function POST(req: Request) {
     const merchantAccountData =
       await program.account.merchantAccount.fetch(merchantAccount);
 
-    const totalRedeemed = new anchor.BN(
-      merchantAccountData.totalRedeemed.toString(),
-    );
+    const redemptionId =
+      body.redemptionId !== undefined
+        ? new anchor.BN(body.redemptionId)
+        : new anchor.BN(merchantAccountData.redemptionCount.toString()).subn(1);
+
+    if (redemptionId.isNeg()) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "No redemption request exists for this merchant",
+        },
+        { status: 400 },
+      );
+    }
 
     const [redemptionRequest] = PublicKey.findProgramAddressSync(
       [
         Buffer.from(REDEMPTION_SEED),
         merchantWallet.toBuffer(),
-        totalRedeemed.toArrayLike(Buffer, "le", 8),
+        redemptionId.toArrayLike(Buffer, "le", 8),
       ],
       program.programId,
     );
@@ -72,6 +83,7 @@ export async function POST(req: Request) {
       merchantWallet: merchantWallet.toBase58(),
       merchantAccount: merchantAccount.toBase58(),
       redemptionRequest: redemptionRequest.toBase58(),
+      redemptionId: redemptionId.toString(),
     });
   } catch (error) {
     console.error("Approve redemption error:", error);

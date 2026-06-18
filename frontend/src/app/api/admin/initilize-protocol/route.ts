@@ -1,5 +1,6 @@
 import { getAnchorProgram, PROTOCOL_SEED, TREASURY_SEED } from "@lib/anchor";
 import { checkUserPermission } from "@lib/login-utils";
+import { TRAVEL_USD_DECIMALS, TRAVEL_USD_SYMBOL } from "@lib/travel-usd";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import { StatusCodes } from "http-status-codes";
@@ -69,6 +70,8 @@ export async function POST() {
       protocolConfig: protocolConfig.toBase58(),
       treasury: treasury.toBase58(),
       mint: mint.publicKey.toBase58(),
+      currency: TRAVEL_USD_SYMBOL,
+      decimals: TRAVEL_USD_DECIMALS,
       feeBps,
     });
   } catch (error) {

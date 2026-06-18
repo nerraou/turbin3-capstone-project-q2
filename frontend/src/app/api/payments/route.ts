@@ -7,8 +7,8 @@ import {
 import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
-import { getAnchorProgram } from "@lib/anchor";
 import {
+  getAnchorProgram,
   MERCHANT_SEED,
   PAYMENT_RECEIPT_SEED,
   PROTOCOL_SEED,
