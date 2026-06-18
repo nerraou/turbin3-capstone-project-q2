@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+import { getAnchorProgram, TRAVELER_SEED } from "@lib/anchor";
 import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
-import { getAnchorProgram } from "@lib/anchor";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
     const travelerWallet = Keypair.generate();
 
     const [travelerAccount] = PublicKey.findProgramAddressSync(
-      [Buffer.from("traveler"), travelerWallet.publicKey.toBuffer()],
+      [Buffer.from(TRAVELER_SEED), travelerWallet.publicKey.toBuffer()],
       program.programId,
     );
 

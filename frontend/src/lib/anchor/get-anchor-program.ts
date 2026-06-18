@@ -1,8 +1,8 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import idl from "./anchor/idl/travel_ramp.json";
-import type { TravelRamp } from "./anchor/types/travel_ramp";
-import { BackendWallet } from "./wallet-wrapper";
+import { BackendWallet } from "./backend-wallet";
+import idl from "./idl/travel_ramp.json";
+import type { TravelRamp } from "./types/travel_ramp";
 
 export function getAnchorProgram() {
   const rpcUrl = process.env.SOLANA_RPC_URL;

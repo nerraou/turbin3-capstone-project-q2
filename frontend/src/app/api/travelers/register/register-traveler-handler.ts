@@ -1,4 +1,4 @@
-import { getAnchorProgram } from "@lib/anchor";
+import { getAnchorProgram, TRAVELER_SEED } from "@lib/anchor";
 import { db } from "@lib/database/connection";
 import {
   createUser,
@@ -92,7 +92,7 @@ export default async function registerTravelerHandler(
       );
 
       const [travelerAccount] = PublicKey.findProgramAddressSync(
-        [Buffer.from("traveler"), travelerWalletPublicKey.toBuffer()],
+        [Buffer.from(TRAVELER_SEED), travelerWalletPublicKey.toBuffer()],
         program.programId,
       );
 

@@ -1,6 +1,6 @@
 import * as anchor from "@coral-xyz/anchor";
-import { NextResponse } from "next/server";
 import { PublicKey } from "@solana/web3.js";
+import { NextResponse } from "next/server";
 
 import { getAnchorProgram } from "@lib/anchor";
 

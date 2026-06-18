@@ -1,4 +1,5 @@
 import { getAnchorProgram } from "@lib/anchor";
+import { MERCHANT_SEED } from "@lib/anchor";
 import { db } from "@lib/database/connection";
 import {
   createMerchant,
@@ -98,7 +99,7 @@ export default async function registerMerchantHandler(
       );
 
       const [merchantAccount] = PublicKey.findProgramAddressSync(
-        [Buffer.from("merchant"), merchantWalletPublicKey.toBuffer()],
+        [Buffer.from(MERCHANT_SEED), merchantWalletPublicKey.toBuffer()],
         program.programId,
       );
 

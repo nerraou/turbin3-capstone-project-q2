@@ -1,15 +1,15 @@
 import {
   registerMerchant,
-  type TravelerRegisterApiData,
-  type TravelerRegisterApiResponse,
+  type MerchantRegisterApiData,
+  type MerchantRegisterApiResponse,
 } from "@lib/api";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useMerchantRegisterMutation() {
   return useMutation<
-    TravelerRegisterApiResponse,
-    TravelerRegisterApiResponse,
-    TravelerRegisterApiData
+    MerchantRegisterApiResponse,
+    MerchantRegisterApiResponse,
+    MerchantRegisterApiData
   >({
     mutationFn: registerMerchant,
   });

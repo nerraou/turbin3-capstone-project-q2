@@ -1,13 +1,25 @@
-import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { getAnchorProgram, PROTOCOL_SEED, TREASURY_SEED } from "@lib/anchor";
+import { checkUserPermission } from "@lib/login-utils";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
+import { StatusCodes } from "http-status-codes";
 import { NextResponse } from "next/server";
-import { getAnchorProgram } from "@lib/anchor";
 
-const PROTOCOL_SEED = "protocol";
-const TREASURY_SEED = "treasury";
-
-export async function GET() {
+export async function POST() {
   try {
+    const { status } = await checkUserPermission(["admin"]);
+
+    if (status !== "ok") {
+      return NextResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: StatusCodes.UNAUTHORIZED,
+        },
+      );
+    }
+
     const { program, wallet, connection } = getAnchorProgram();
 
     const feeBps = 100; // 1%
@@ -34,7 +46,7 @@ export async function GET() {
           protocolConfig: protocolConfig.toBase58(),
           treasury: treasury.toBase58(),
         },
-        { status: 409 },
+        { status: StatusCodes.CONFLICT },
       );
     }
 
@@ -70,7 +82,7 @@ export async function GET() {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR },
     );
   }
 }

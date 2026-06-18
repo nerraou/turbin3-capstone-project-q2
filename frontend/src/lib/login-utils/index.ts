@@ -1,4 +1,6 @@
-import { getCookie, hasCookie, setHostHttpCookie } from "@lib/cookie-utils";
+import { verifyAccessToken } from "@lib/auth/jwt";
+import { getCookie, setHostHttpCookie } from "@lib/cookie-utils";
+import { UserRole } from "@lib/database/schema/users";
 import { redirect } from "next/navigation";
 
 export const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
@@ -7,14 +9,36 @@ export async function createSession(accessToken: string) {
   await setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
 }
 
-export async function getAccessToken() {
-  const accessToken = await getCookie(ACCESS_TOKEN_COOKIE_NAME);
+export async function getAccessTokenPayload() {
+  const accessTokenCookie = await getCookie(ACCESS_TOKEN_COOKIE_NAME);
 
-  return accessToken?.value;
+  if (!accessTokenCookie) {
+    return undefined;
+  }
+
+  return verifyAccessToken(accessTokenCookie.value);
 }
 
-export function hasSessionToken() {
-  return hasCookie(ACCESS_TOKEN_COOKIE_NAME);
+interface CheckUserPermissionReturn {
+  status: "ok" | "unauthorized" | "forbidden";
+}
+
+export async function checkUserPermission(
+  roles: UserRole[],
+): Promise<CheckUserPermissionReturn> {
+  const payload = await getAccessTokenPayload();
+
+  if (!payload) {
+    return {
+      status: "unauthorized",
+    };
+  }
+
+  const hasRole = roles.includes(payload.role);
+
+  return {
+    status: hasRole ? "ok" : "forbidden",
+  };
 }
 
 export function redirectToLogin(returnUrl?: string) {
