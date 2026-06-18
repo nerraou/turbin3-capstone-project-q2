@@ -15,10 +15,21 @@ import {
   TRAVELER_SEED,
   TREASURY_SEED,
 } from "@lib/anchor";
-import { getUserById, getWalletByUserId } from "@lib/database/repositories";
+import {
+  getUserById,
+  getUserByUsername,
+  getWalletByUserId,
+} from "@lib/database/repositories";
 import { checkUserPermission, getAccessTokenPayload } from "@lib/login-utils";
+import {
+  formatTravelUsdFromBaseUnits,
+  getTravelUsdAmountFromBody,
+  TRAVEL_USD_DECIMALS,
+  TRAVEL_USD_SYMBOL,
+} from "@lib/travel-usd";
 import { decryptWalletEncryption } from "@lib/wallet";
 import { StatusCodes } from "http-status-codes";
+import paymentApiDataSchema from "./payment-api-data-schema";
 
 async function getUserFromCookie() {
   const payload = await getAccessTokenPayload();
@@ -44,6 +55,28 @@ async function getTravelerWallet(userId: bigint) {
   return travelerKeypair;
 }
 
+async function getMerchantWallet(username: string) {
+  const merchant = await getUserByUsername(username);
+
+  if (!merchant) {
+    return undefined;
+  }
+
+  const wallet = await getWalletByUserId(merchant.id);
+
+  if (!wallet) {
+    throw new Error("no wallet found");
+  }
+
+  const merchantWallet = await decryptWalletEncryption(
+    Buffer.from(process.env.WALLET_KEK, "hex"),
+    wallet.encryptedPrivateKey,
+    wallet.encryptedDek,
+  );
+
+  return merchantWallet.publicKey;
+}
+
 export async function POST(req: Request) {
   try {
     const { status } = await checkUserPermission(["traveler"]);
@@ -56,6 +89,19 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+    console.log(body);
+
+    const parseResult = paymentApiDataSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: parseResult.error.issues[0]?.message ?? "Invalid request body",
+        },
+        { status: StatusCodes.UNPROCESSABLE_ENTITY },
+      );
+    }
 
     const user = await getUserFromCookie();
 
@@ -67,9 +113,20 @@ export async function POST(req: Request) {
     }
 
     const travelerWallet = await getTravelerWallet(user.id);
+    const merchantWallet = await getMerchantWallet(parseResult.data.merchant);
 
-    const merchantWallet = new PublicKey(body.merchantWallet);
-    const amount = new anchor.BN(body.amount);
+    if (!merchantWallet) {
+      return NextResponse.json(
+        {
+          message: "merchant not found",
+        },
+        {
+          status: StatusCodes.UNPROCESSABLE_ENTITY,
+        },
+      );
+    }
+
+    const amount = getTravelUsdAmountFromBody(parseResult.data);
 
     const { program, wallet, connection } = getAnchorProgram();
 
@@ -186,6 +243,9 @@ export async function POST(req: Request) {
       treasuryAta: treasuryAta.toBase58(),
       paymentReceipt: paymentReceipt.toBase58(),
       amount: amount.toString(),
+      amountUsd: formatTravelUsdFromBaseUnits(amount),
+      currency: TRAVEL_USD_SYMBOL,
+      decimals: TRAVEL_USD_DECIMALS,
     });
   } catch (error) {
     console.error("Pay merchant error:", error);

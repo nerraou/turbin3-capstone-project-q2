@@ -1,7 +1,6 @@
 "use client";
 
 import { BedDouble, ShoppingCart } from "lucide-react";
-import { useState } from "react";
 
 import { Button } from "@components/ui/button";
 import {
@@ -14,18 +13,15 @@ import {
 
 import { rooms } from "../../data/rooms";
 import { HotelRoomProductMetadata, Product } from "../../data/types";
+import { useCart } from "react-use-cart";
+import { useRouter } from "next/navigation";
 
 export default function RoomsPage() {
-  const [cart, setCart] = useState<Product<HotelRoomProductMetadata>[]>([]);
+  const router = useRouter();
+  const { addItem, inCart, totalItems } = useCart();
 
   function addToCart(room: Product<HotelRoomProductMetadata>) {
-    setCart((current) => {
-      const exists = current.some((item) => item.id === room.id);
-
-      if (exists) return current;
-
-      return [...current, room];
-    });
+    addItem(room);
   }
 
   return (
@@ -39,15 +35,20 @@ export default function RoomsPage() {
           </p>
         </div>
 
-        <Button variant="outline">
+        <Button
+          variant="outline"
+          onClick={() => {
+            router.push("/checkout");
+          }}
+        >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Cart ({cart.length})
+          Cart ({totalItems})
         </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {rooms.map((room) => {
-          const inCart = cart.some((item) => item.id === room.id);
+          const isInCart = inCart(room.id);
 
           return (
             <Card key={room.id}>
@@ -83,16 +84,27 @@ export default function RoomsPage() {
               <CardFooter>
                 <Button
                   className="w-full"
-                  disabled={inCart}
+                  disabled={isInCart}
                   onClick={() => addToCart(room)}
                 >
-                  {inCart ? "Added to Cart" : "Add to Cart"}
+                  {isInCart ? "Added to Cart" : "Add to Cart"}
                 </Button>
               </CardFooter>
             </Card>
           );
         })}
       </div>
+
+      {totalItems > 0 ? (
+        <Button
+          className="fixed right-6 bottom-6 h-11 shadow-lg"
+          onClick={() => {
+            router.push("/checkout");
+          }}
+        >
+          Checkout ({totalItems})
+        </Button>
+      ) : null}
     </main>
   );
 }
