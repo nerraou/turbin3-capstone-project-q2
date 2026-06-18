@@ -14,10 +14,10 @@ import { InfoIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import useRegisterForm, {
-  type RegisterFormFieldValues,
-} from "./use-register-form";
-import useRegisterMutation from "./use-register-mutation";
+import useMerchantRegisterForm, {
+  type MerchantRegisterFormFieldValues,
+} from "./use-merchant-register-form";
+import useMerchantRegisterMutation from "./use-merchant-register-mutation";
 
 function getMessageByStatus(status: number) {
   if (status === StatusCodes.CREATED) {
@@ -31,9 +31,9 @@ function getMessageByStatus(status: number) {
   return "Something went wrong! try again!";
 }
 
-export function RegisterForm() {
-  const registerForm = useRegisterForm();
-  const registerMutation = useRegisterMutation();
+export function MerchantRegisterForm() {
+  const registerForm = useMerchantRegisterForm();
+  const registerMutation = useMerchantRegisterMutation();
   const router = useRouter();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function RegisterForm() {
     }
   }, [router, registerMutation.isSuccess, registerMutation.data]);
 
-  async function onFormSubmit(data: RegisterFormFieldValues) {
+  async function onFormSubmit(data: MerchantRegisterFormFieldValues) {
     registerMutation.mutate(data);
   }
 
@@ -53,7 +53,7 @@ export function RegisterForm() {
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Create New Account</CardTitle>
+          <CardTitle>Create New Merchant Account</CardTitle>
           <CardDescription>
             Create your new account to start using the app!
           </CardDescription>
@@ -73,6 +73,18 @@ export function RegisterForm() {
             className="space-y-4"
             onSubmit={registerForm.handleSubmit(onFormSubmit)}
           >
+            <div className="space-y-2">
+              <InputFormController
+                control={registerForm.control}
+                name="name"
+                label="Name"
+                inputProps={{
+                  id: "name",
+                  placeholder: "The best Inc",
+                }}
+              />
+            </div>
+
             <div className="space-y-2">
               <InputFormController
                 control={registerForm.control}

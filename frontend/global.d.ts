@@ -17,5 +17,9 @@ declare namespace NodeJS {
     SOLANA_RPC_URL: string;
     TRAVELRAMP_PROGRAM_ID: string;
     BACKEND_WALLET_SECRET_KEY: string;
+
+    // App Admin User
+    APP_ADMIN_USERNAME: string;
+    APP_ADMIN_PASSWORD: string;
   }
 }

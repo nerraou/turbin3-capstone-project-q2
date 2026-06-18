@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781379742202,
-      "tag": "0000_fancy_tenebrous",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1781460683223,
-      "tag": "0001_add-wallets-table",
+      "when": 1781740016540,
+      "tag": "0000_init",
       "breakpoints": true
     }
   ]

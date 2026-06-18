@@ -1,6 +1,8 @@
 import { getAnchorProgram } from "@lib/anchor";
+import { MERCHANT_SEED } from "@lib/anchor";
 import { db } from "@lib/database/connection";
 import {
+  createMerchant,
   createUser,
   createWallet,
   getUserByUsername,
@@ -15,11 +17,8 @@ import {
   SystemProgram,
 } from "@solana/web3.js";
 import { StatusCodes } from "http-status-codes";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type RegisterApiData } from "./register-api-data-schema";
-
-const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
+import { type RegisterMerchantApiData } from "./register-merchant-api-data-schema";
 
 export interface RegisterHandlerReturn {
   message: string;
@@ -36,18 +35,7 @@ export function isUniqueViolation(error: unknown) {
 async function createResponse(
   status: number,
   message: string,
-  accessToken?: string,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
-  if (accessToken) {
-    const cookiesStore = await cookies();
-
-    cookiesStore.set(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-    });
-  }
-
   return NextResponse.json({ message }, { status });
 }
 
@@ -66,8 +54,8 @@ async function generateWallet() {
   };
 }
 
-export default async function registerHandler(
-  data: RegisterApiData,
+export default async function registerMerchantHandler(
+  data: RegisterMerchantApiData,
 ): Promise<NextResponse<RegisterHandlerReturn>> {
   const user = await getUserByUsername(data.username);
   const { program, wallet } = getAnchorProgram();
@@ -79,41 +67,47 @@ export default async function registerHandler(
   const hashedPassword = await hashPassword(data.password);
 
   try {
-    const travelerWallet = await generateWallet();
-    const travelerWalletPublicKey = new PublicKey(travelerWallet.address);
-    let initializeTravelerTx: string | undefined;
+    const merchantWallet = await generateWallet();
+    const merchantWalletPublicKey = new PublicKey(merchantWallet.address);
+    let initializeMerchantTx: string | undefined;
 
     await db.transaction(async (tx) => {
       const createdUser = await createUser(
         {
           username: data.username,
           password: hashedPassword,
+          role: "merchant",
         },
         tx,
       );
 
+      await createMerchant({
+        userId: createdUser.id,
+        name: data.name,
+      });
+
       await createWallet(
         {
           chain: "solana",
-          address: travelerWallet.address,
-          encryptedDek: travelerWallet.encryptedDek,
-          encryptedPrivateKey: travelerWallet.encryptedPrivateKey,
+          address: merchantWallet.address,
+          encryptedDek: merchantWallet.encryptedDek,
+          encryptedPrivateKey: merchantWallet.encryptedPrivateKey,
           userId: createdUser.id,
           keyVersion: "v1",
         },
         tx,
       );
 
-      const [travelerAccount] = PublicKey.findProgramAddressSync(
-        [Buffer.from("traveler"), travelerWalletPublicKey.toBuffer()],
+      const [merchantAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from(MERCHANT_SEED), merchantWalletPublicKey.toBuffer()],
         program.programId,
       );
 
-      initializeTravelerTx = await program.methods
-        .initializeTraveler(travelerWalletPublicKey)
+      initializeMerchantTx = await program.methods
+        .registerMerchant(merchantWalletPublicKey)
         .accountsPartial({
           payer: wallet.publicKey,
-          travelerAccount,
+          merchantAccount,
           systemProgram: SystemProgram.programId,
         })
         .rpc();
@@ -122,8 +116,8 @@ export default async function registerHandler(
     return NextResponse.json(
       {
         message: "Success",
-        initializeTravelerTx,
-        travelerWallet: travelerWallet.address,
+        initializeMerchantTx,
+        merchantWallet: merchantWallet.address,
       },
       { status: StatusCodes.CREATED },
     );

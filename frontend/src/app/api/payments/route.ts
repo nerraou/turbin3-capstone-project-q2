@@ -8,36 +8,24 @@ import { PublicKey, SystemProgram } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
 import { getAnchorProgram } from "@lib/anchor";
-import { getCookie } from "@lib/cookie-utils";
-import { ACCESS_TOKEN_COOKIE_NAME } from "../auth/login/login-handler";
-import { StatusCodes } from "http-status-codes";
-import { verifyAccessToken } from "@lib/auth/jwt";
+import {
+  MERCHANT_SEED,
+  PAYMENT_RECEIPT_SEED,
+  PROTOCOL_SEED,
+  TRAVELER_SEED,
+  TREASURY_SEED,
+} from "@lib/anchor";
 import { getUserById, getWalletByUserId } from "@lib/database/repositories";
+import { checkUserPermission, getAccessTokenPayload } from "@lib/login-utils";
 import { decryptWalletEncryption } from "@lib/wallet";
-
-const PROTOCOL_SEED = "protocol";
-const TREASURY_SEED = "treasury";
-const TRAVELER_SEED = "traveler";
-const MERCHANT_SEED = "merchant";
-const PAYMENT_RECEIPT_SEED = "payment_receipt";
+import { StatusCodes } from "http-status-codes";
 
 async function getUserFromCookie() {
-  // TODO: move this to @lib/login-utils
-  const accessTokenCookie = await getCookie(ACCESS_TOKEN_COOKIE_NAME);
+  const payload = await getAccessTokenPayload();
 
-  if (!accessTokenCookie) {
-    return undefined;
+  if (payload) {
+    return getUserById(payload.aud);
   }
-
-  const payload = await verifyAccessToken(accessTokenCookie.value);
-
-  if (!payload?.aud) {
-    return undefined;
-  }
-
-  const user = await getUserById(payload.aud as unknown as bigint);
-
-  return user;
 }
 
 async function getTravelerWallet(userId: bigint) {
@@ -58,6 +46,15 @@ async function getTravelerWallet(userId: bigint) {
 
 export async function POST(req: Request) {
   try {
+    const { status } = await checkUserPermission(["traveler"]);
+
+    if (status !== "ok") {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: StatusCodes.UNAUTHORIZED },
+      );
+    }
+
     const body = await req.json();
 
     const user = await getUserFromCookie();

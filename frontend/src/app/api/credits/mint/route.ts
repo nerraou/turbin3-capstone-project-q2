@@ -1,19 +1,17 @@
 import * as anchor from "@coral-xyz/anchor";
-import { NextResponse } from "next/server";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
+import {
+  getAnchorProgram,
+  PROTOCOL_SEED,
+  TRAVELER_SEED,
+  TREASURY_SEED,
+} from "@lib/anchor";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-
-import { getAnchorProgram } from "@lib/anchor";
-
-export const runtime = "nodejs";
-
-const PROTOCOL_SEED = "protocol";
-const TREASURY_SEED = "treasury";
-const TRAVELER_SEED = "traveler";
+import { PublicKey, SystemProgram } from "@solana/web3.js";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
