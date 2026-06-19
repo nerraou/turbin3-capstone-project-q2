@@ -11,7 +11,7 @@ pub use events::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("8auatzShQgGGu6HbNhfPmxFZKNQUzrzW7j7X2n8Knp5g");
+declare_id!("Di6eWsPjLxVJwkZ9wJPs71PkFuxJrwieCKYa93kdfFYa");
 
 #[program]
 pub mod travel_ramp {
