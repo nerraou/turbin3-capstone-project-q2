@@ -3,7 +3,7 @@ export interface Product<T> {
   name: string;
   description: string;
   price: number;
-  currency: "MAD";
+  currency: "$";
   imageUrl: string;
   available: boolean;
   metadata: T;

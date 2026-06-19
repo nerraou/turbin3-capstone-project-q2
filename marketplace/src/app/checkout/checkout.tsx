@@ -5,29 +5,22 @@ import { Button } from "@components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
 import { useIsMounted } from "@hooks/use-is-mounted";
+import { useRouter } from "next/navigation";
 import { useCart } from "react-use-cart";
 
 const merchantName = "Atlas Travel Marketplace";
 const merchantUsername = "atlas.travel";
 
 function getPaymentConfirmUrl(cartTotal: number) {
-  const paymentConfirmUrl =
-    process.env.NEXT_PUBLIC_PAYMENT_CONFIRM_URL ??
-    "http://localhost:3001/payment/confirm";
-  const merchantWallet = process.env.NEXT_PUBLIC_MARKETPLACE_MERCHANT_WALLET;
-
-  if (!merchantWallet) {
-    return "";
-  }
+  const paymentConfirmUrl = process.env.NEXT_PUBLIC_PAYMENT_CONFIRM_URL;
 
   const queryParams = new URLSearchParams({
-    merchantWallet,
     merchantName,
     amountUsd: cartTotal.toFixed(2),
     currency: "$",
     ref: `MKT_${Date.now()}`,
     merchant: merchantUsername,
-    returnUrl: `${window.location.origin}/checkout?success=true`,
+    returnUrl: `${window.location.origin}?payment_success=true`,
   });
 
   return `${paymentConfirmUrl}?${queryParams.toString()}`;
@@ -50,9 +43,10 @@ function getItemType(item: unknown) {
 }
 
 export default function Checkout() {
-  const { items, totalItems, cartTotal, isEmpty } = useCart();
+  const { items, totalItems, cartTotal, isEmpty, emptyCart } = useCart();
   const isMounted = useIsMounted();
   const paymentConfirmUrl = isMounted ? getPaymentConfirmUrl(cartTotal) : "";
+  const router = useRouter();
 
   if (!isMounted) {
     return null;
@@ -83,7 +77,7 @@ export default function Checkout() {
               </div>
 
               <p className="font-semibold">
-                {(item.price * (item.quantity ?? 1)).toLocaleString()} MAD
+                ${(item.price * (item.quantity ?? 1)).toLocaleString()}
               </p>
             </div>
           ))}
@@ -92,7 +86,7 @@ export default function Checkout() {
 
           <div className="flex justify-between text-lg font-bold">
             <span>Total for {totalItems} items</span>
-            <span>{cartTotal.toLocaleString()} MAD</span>
+            <span>${cartTotal.toLocaleString()}</span>
           </div>
 
           {!paymentConfirmUrl ? (
@@ -106,10 +100,11 @@ export default function Checkout() {
             className="h-11 w-full text-base"
             disabled={isEmpty || !paymentConfirmUrl}
             onClick={() => {
-              window.location.href = paymentConfirmUrl;
+              emptyCart();
+              router.push(paymentConfirmUrl);
             }}
           >
-            Pay {cartTotal.toLocaleString()} MAD
+            Pay ${cartTotal.toLocaleString()}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">

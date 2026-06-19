@@ -90,7 +90,7 @@ function PurchaseBalance(props: PurchaseBalanceProps) {
       return "";
     }
 
-    const paymentGatewatUrl = process.env.NEXT_PUBLIC_URL;
+    const paymentGatewayUrl = process.env.NEXT_PUBLIC_GATEWAY_URL;
     const hostUrl = process.env.NEXT_PUBLIC_HOST_URL;
 
     const amountInBaseUnit = travelUSDToBaseUnits(parsedAmount);
@@ -108,7 +108,7 @@ function PurchaseBalance(props: PurchaseBalanceProps) {
       currency: "$",
     });
 
-    return `${paymentGatewatUrl}?${queryParams.toString()}`;
+    return `${paymentGatewayUrl}?${queryParams.toString()}`;
   }
 
   return (

@@ -30,18 +30,17 @@ export default function ConfirmPayment() {
     () => ({
       merchantName:
         searchParams.get("merchantName") ?? "Atlas Travel Marketplace",
-      merchantWallet: searchParams.get("merchantWallet") ?? "",
       paymentReference: searchParams.get("ref") ?? buildPaymentReference(),
       amountUsd: searchParams.get("amountUsd") ?? searchParams.get("amount"),
       currency: searchParams.get("currency") ?? "TravelUSD",
       returnUrl: searchParams.get("returnUrl"),
-      merchant: searchParams.get("merchant"),
+      merchant: searchParams.get("merchant") ?? "",
     }),
     [searchParams],
   );
 
   const total = Number(payment.amountUsd ?? "0");
-  const isReady = payment.merchantWallet.length > 0 && total > 0;
+  const isReady = payment.merchant.length > 0 && total > 0;
 
   async function confirmPayment() {
     if (!isReady || !payment.amountUsd) {
@@ -118,14 +117,6 @@ export default function ConfirmPayment() {
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">Merchant Wallet</p>
-
-            <p className="font-mono text-sm break-all">
-              {payment.merchantWallet || "-"}
-            </p>
-          </div>
-
-          <div>
             <p className="text-sm text-muted-foreground">Payment Reference</p>
 
             <p className="font-mono">{payment.paymentReference}</p>
@@ -137,7 +128,8 @@ export default function ConfirmPayment() {
             <div className="flex justify-between text-lg font-semibold">
               <span>Total</span>
               <span>
-                {total.toFixed(2)} {payment.currency}
+                {payment.currency}
+                {total.toFixed(2)}
               </span>
             </div>
           </div>

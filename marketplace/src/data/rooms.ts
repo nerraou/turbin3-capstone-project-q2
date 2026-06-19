@@ -1,27 +1,11 @@
 import { HotelRoomProductMetadata, Product } from "./types";
 
-// export const roomImages = [
-//     "https://images.unsplash.com/photo-1566073771259-6a8506099945",
-//     "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
-//     "https://images.unsplash.com/photo-1578683010236-d716f9a3f461",
-//     "https://images.unsplash.com/photo-1590490360182-c33d57733427",
-//     "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa",
-//     "https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8",
-//     "https://images.unsplash.com/photo-1445019980597-93fa8acb246c",
-//     "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-//     "https://images.unsplash.com/photo-1455587734955-081b22074882",
-//     "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd",
-//     "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
-//     "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
-//     "https://images.unsplash.com/photo-1505693416388-b2dee6f497f5",
-//   ];
-
 export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_1",
     name: "Atlas View Hotel",
-    price: 850,
-    currency: "MAD",
+    price: 85,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945",
@@ -36,8 +20,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_2",
     name: "Atlas View Hotel",
-    price: 920,
-    currency: "MAD",
+    price: 92,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
@@ -52,8 +36,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_3",
     name: "Atlas View Hotel",
-    price: 1450,
-    currency: "MAD",
+    price: 110,
+    currency: "$",
     available: false,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461",
@@ -68,8 +52,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_4",
     name: "Ocean Breeze Resort",
-    price: 2100,
-    currency: "MAD",
+    price: 200,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa",
@@ -84,8 +68,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_5",
     name: "Ocean Breeze Resort",
-    price: 2800,
-    currency: "MAD",
+    price: 280,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945",
@@ -100,8 +84,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_6",
     name: "Riad Medina Palace",
-    price: 1750,
-    currency: "MAD",
+    price: 175,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
@@ -116,8 +100,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_7",
     name: "Riad Medina Palace",
-    price: 3900,
-    currency: "MAD",
+    price: 390,
+    currency: "$",
     available: false,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461",
@@ -132,8 +116,8 @@ export const rooms: Product<HotelRoomProductMetadata>[] = [
   {
     id: "room_8",
     name: "Business Hotel Casablanca",
-    price: 1250,
-    currency: "MAD",
+    price: 125,
+    currency: "$",
     available: true,
     description: "",
     imageUrl: "https://images.unsplash.com/photo-1590490360182-c33d57733427",
