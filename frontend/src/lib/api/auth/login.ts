@@ -1,4 +1,5 @@
 import { LoginFormFieldValues } from "@app/login/use-login-form";
+import { type UserRole } from "@lib/database/schema/users";
 import { LOGIN_ENDPOINT } from "../endpoints";
 
 export type LoginApiData = Pick<LoginFormFieldValues, "username" | "password">;
@@ -7,6 +8,7 @@ export interface LoginApiResponse {
   status: number;
   data: {
     message: string;
+    role: UserRole;
   };
 }
 
