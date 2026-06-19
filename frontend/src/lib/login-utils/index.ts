@@ -1,5 +1,5 @@
 import { UserJwtPayload, verifyAccessToken } from "@lib/auth/jwt";
-import { getCookie, setHostHttpCookie } from "@lib/cookie-utils";
+import { deleteCookie, getCookie, setHostHttpCookie } from "@lib/cookie-utils";
 import { UserRole } from "@lib/database/schema/users";
 import { redirect } from "next/navigation";
 
@@ -56,7 +56,7 @@ export async function checkUserPermission(
   };
 }
 
-export function redirectToLogin(returnUrl?: string) {
+export function redirectToLogin(returnUrl?: string): never {
   const loginUrlPath = "/login";
   let query = "";
 
@@ -69,4 +69,8 @@ export function redirectToLogin(returnUrl?: string) {
   }
 
   return redirect(`${loginUrlPath}${query}`);
+}
+
+export async function destroySession() {
+  await deleteCookie(ACCESS_TOKEN_COOKIE_NAME);
 }

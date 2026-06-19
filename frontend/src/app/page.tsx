@@ -1,19 +1,62 @@
+import { Separator } from "@base-ui/react";
 import { Button } from "@components/ui/button";
+import { dashboardsUrls } from "@lib/dashboards-urls";
+import { checkUserPermission } from "@lib/login-utils";
+import Link from "next/link";
 
-export default function Page() {
+export default async function HomePage() {
+  const { status, payload } = await checkUserPermission([
+    "admin",
+    "merchant",
+    "traveler",
+  ]);
+
+  const isAuthenticated = status === "ok";
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
+    <main className="flex min-h-screen items-center justify-center px-6">
+      <div className="max-w-xl text-center">
+        <h1 className="text-5xl font-bold tracking-tight">
+          Welcome to TravelRamp
+        </h1>
+
+        <p className="mt-4 text-muted-foreground">
+          Purchase TravelUSD tokens and use them across supported marketplaces
+          and merchants.
+        </p>
+
+        <div className="mt-8 flex justify-center gap-4">
+          {isAuthenticated ? (
+            <Button size="lg">
+              <Link href={dashboardsUrls[payload.role]}>Go to Dashboard</Link>
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Button size="lg">
+                <Link className="w-full" href="/login">
+                  Login
+                </Link>
+              </Button>
+
+              <Separator />
+
+              <div className="flex gap-2">
+                <Button variant="outline" size="lg">
+                  <Link href="/travelers/register">
+                    Create Traveler Account
+                  </Link>
+                </Button>
+
+                <Button variant="outline" size="lg">
+                  <Link href="/merchants/register">
+                    Create Merchant Account
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import InputFormController from "@components/input-form-controller";
 import useRedirectUrl from "@hooks/use-redirect-url";
+import { dashboardsUrls } from "@lib/dashboards-urls";
 import { Alert, AlertDescription } from "@ui/alert";
 import { Button } from "@ui/button";
 import {
@@ -27,7 +28,7 @@ export function LoginForm() {
       loginMutation.isSuccess &&
       loginMutation.data.status === StatusCodes.OK
     ) {
-      redirect();
+      redirect(dashboardsUrls[loginMutation.data.data.role]);
     }
   }, [redirect, loginMutation.isSuccess, loginMutation.data]);
 
@@ -57,6 +58,7 @@ export function LoginForm() {
             )}
 
           <form
+            method="POST"
             className="space-y-4"
             onSubmit={loginForm.handleSubmit(onFormSubmit)}
           >

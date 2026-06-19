@@ -1,3 +1,4 @@
+import { PageLayout } from "@components/page-layout";
 import { checkUserPermission, redirectToLogin } from "@lib/login-utils";
 import { randomBytes } from "crypto";
 import TravelerDashboard from "./traveler-dashboard";
@@ -7,7 +8,7 @@ function generatePaymentReference() {
 }
 
 export default async function TravelerDashboardPage() {
-  const { status } = await checkUserPermission(["traveler"]);
+  const { status, payload } = await checkUserPermission(["traveler"]);
 
   if (status !== "ok") {
     redirectToLogin("/travelers/dashboard");
@@ -15,5 +16,9 @@ export default async function TravelerDashboardPage() {
 
   const paymentReference = generatePaymentReference();
 
-  return <TravelerDashboard paymentReference={paymentReference} />;
+  return (
+    <PageLayout isAuthenticated role={payload.role}>
+      <TravelerDashboard paymentReference={paymentReference} />
+    </PageLayout>
+  );
 }
