@@ -26,6 +26,6 @@ declare namespace NodeJS {
     APP_ADMIN_PASSWORD: string;
 
     // Payment Gateway
-    NEXT_PUBLIC_URL: string;
+    NEXT_PUBLIC_GATEWAY_URL: string;
   }
 }

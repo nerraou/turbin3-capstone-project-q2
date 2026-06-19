@@ -92,7 +92,7 @@ export default function ProductsPage() {
                 </div>
 
                 <p className="text-xl font-semibold">
-                  {product.price.toLocaleString()} MAD
+                  ${product.price.toLocaleString()}
                 </p>
               </CardContent>
 

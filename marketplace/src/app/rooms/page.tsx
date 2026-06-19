@@ -74,7 +74,7 @@ export default function RoomsPage() {
                 </div>
 
                 <p className="text-lg font-semibold">
-                  {room.price.toLocaleString()} MAD
+                  ${room.price.toLocaleString()}
                   <span className="ml-1 text-sm text-muted-foreground">
                     / night
                   </span>
