@@ -16,17 +16,23 @@ Di6eWsPjLxVJwkZ9wJPs71PkFuxJrwieCKYa93kdfFYa
 
 ## Click to open the Simple Flow
 
-<a href="./assets/admin-flow.png" target="_blank">
-	<img src="./assets/admin-flow.png" width="200" />
-</a>
+<div>
+	<a href="./assets/admin-flow.png">
+		<img src="./assets/admin-flow.png" width="300" />
+	</a>
+</div>
 
-<a href="./assets/traveler-flow.png" target="_blank">
-	<img src="./assets/traveler-flow.png" width="200" />
-</a>
+<div>
+	<a href="./assets/traveler-flow.png">
+		<img src="./assets/traveler-flow.png" width="300" />
+	</a>
+</div>
 
-<a href="./assets/merchant-flow.png" target="_blank">
-	<img src="./assets/merchant-flow.png" width="200" />
-</a>
+<div>
+	<a href="./assets/merchant-flow.png">
+		<img src="./assets/merchant-flow.png" width="300" />
+	</a>
+</div>
 
 ## Tech Stack
 
