@@ -1,6 +1,6 @@
 # Turbin3 Capstone Project
 
-TravelRamp is a PayFi infrastructure protocol built on Solana that abstracts blockchain complexity for travelers and merchants by enabling seamless on-chain payments and settlement flows.
+TravelRamp is a PayFi infrastructure protocol built on Solana that makes blockchain payments invisible for everyday users. It enables travelers or non-Web3 users to receive on-chain spending credits, pay local merchants seamlessly, and allows merchants to redeem those credits through a programmable settlement flow.
 
 ## ProgramId
 
@@ -8,9 +8,25 @@ TravelRamp is a PayFi infrastructure protocol built on Solana that abstracts blo
 Di6eWsPjLxVJwkZ9wJPs71PkFuxJrwieCKYa93kdfFYa
 ```
 
+## [Anchor Project README](travel-ramp/README.md)
+
 ## Test Video
 
 <!-- ![Demo Video](demo-video.mp4) -->
+
+## Click to open the Simple Flow
+
+<a href="./assets/admin-flow.png" target="_blank">
+	<img src="./assets/admin-flow.png" width="200" />
+</a>
+
+<a href="./assets/traveler-flow.png" target="_blank">
+	<img src="./assets/traveler-flow.png" width="200" />
+</a>
+
+<a href="./assets/merchant-flow.png" target="_blank">
+	<img src="./assets/merchant-flow.png" width="200" />
+</a>
 
 ## Tech Stack
 
