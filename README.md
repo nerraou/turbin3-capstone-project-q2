@@ -12,7 +12,7 @@ Di6eWsPjLxVJwkZ9wJPs71PkFuxJrwieCKYa93kdfFYa
 
 ## DEVENT Tests
 
-![alt text](image.png)
+![alt text](./assets/devnet-tests.png)
 
 ## Test Video
 
