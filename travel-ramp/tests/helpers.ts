@@ -34,9 +34,44 @@ export async function confirmTx(signature: string) {
 
 export async function fundAccount(
   account: anchor.web3.PublicKey,
-  lamports = anchor.web3.LAMPORTS_PER_SOL,
+  lamports = anchor.web3.LAMPORTS_PER_SOL / 5,
 ) {
-  const tx = await connection.requestAirdrop(account, lamports);
+  const currentBalance = await connection.getBalance(account, commitment);
+
+  if (currentBalance >= lamports) {
+    return;
+  }
+
+  const rpcEndpoint = connection.rpcEndpoint;
+  const isLocalValidator =
+    rpcEndpoint.includes("127.0.0.1") || rpcEndpoint.includes("localhost");
+
+  if (isLocalValidator) {
+    const tx = await connection.requestAirdrop(account, lamports);
+    await confirmTx(tx);
+    return;
+  }
+
+  const providerBalance = await connection.getBalance(
+    provider.wallet.publicKey,
+    commitment,
+  );
+
+  if (providerBalance < lamports) {
+    throw new Error(
+      `Provider wallet needs at least ${lamports} lamports to fund tests`,
+    );
+  }
+
+  const tx = await provider.sendAndConfirm(
+    new anchor.web3.Transaction().add(
+      anchor.web3.SystemProgram.transfer({
+        fromPubkey: provider.wallet.publicKey,
+        toPubkey: account,
+        lamports,
+      }),
+    ),
+  );
   await confirmTx(tx);
 }
 
