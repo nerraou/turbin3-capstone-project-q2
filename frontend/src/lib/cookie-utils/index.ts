@@ -39,8 +39,8 @@ export async function deleteCookie(key: string) {
 }
 
 export function setHostHttpCookie(key: string, value: string) {
-  if (isProduction() && !key.startsWith("__Host-")) {
-    throw new CookieError("missing __Host- prefix");
+  if (isProduction() && !key.startsWith("__Host-Http")) {
+    throw new CookieError("missing __Host-Http prefix");
   }
 
   return setCookie(key, value, {

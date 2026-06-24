@@ -13,6 +13,7 @@ import {
 } from "@components/ui/card";
 import { useSearchParams } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
+import { Suspense } from "react";
 
 interface PaymentSuccessAlertProps {
   classsName?: string;
@@ -33,7 +34,7 @@ function PaymentSuccessAlert(props: PaymentSuccessAlertProps) {
   );
 }
 
-export default function HomePage() {
+function Home() {
   const searchParams = useSearchParams();
 
   const isPaymentSuccess = searchParams.get("payment_success") === "true";
@@ -96,5 +97,13 @@ export default function HomePage() {
         </Card>
       </div>
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback="...">
+      <Home />
+    </Suspense>
   );
 }

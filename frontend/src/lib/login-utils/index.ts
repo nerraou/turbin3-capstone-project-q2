@@ -3,7 +3,10 @@ import { deleteCookie, getCookie, setHostHttpCookie } from "@lib/cookie-utils";
 import { UserRole } from "@lib/database/schema/users";
 import { redirect } from "next/navigation";
 
-export const ACCESS_TOKEN_COOKIE_NAME = "X-Access-Token";
+export const ACCESS_TOKEN_COOKIE_NAME =
+  process.env.NODE_ENV === "production"
+    ? "__Host-Http-X-Access-Token"
+    : "X-Access-Token";
 
 export async function createSession(accessToken: string) {
   await setHostHttpCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
