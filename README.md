@@ -16,7 +16,7 @@ Di6eWsPjLxVJwkZ9wJPs71PkFuxJrwieCKYa93kdfFYa
 
 ## Test Video
 
-<!-- ![Demo Video](demo-video.mp4) -->
+<video controls src="assets/presentation-solana.mp4" title="Presentation"></video>
 
 ## Click to open the Simple Flow
 
